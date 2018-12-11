@@ -64,8 +64,10 @@
           <template slot="items" slot-scope="props">
             <td class="text-xs-left">{{ props.item.title }}</td>
             <td class="text-xs-right">{{ props.item.published }}</td>
-            <td class="justify-center layout px-0">
-              <v-icon @click="playListAdd(props.item)">playlist_add</v-icon>
+            <td >
+              <v-btn>
+                <v-icon @click="addPlaylist(props.item)">playlist_add</v-icon>
+              </v-btn>
             </td>
           </template>
         </v-data-table>
@@ -159,6 +161,9 @@ export default {
     remove(item) {
       this.chips.splice(this.chips.indexOf(item), 1);
       this.chips = [...this.chips];
+    },
+    addPlaylist(item) {
+      this.$store.dispatch("addPlaylist", item);
     }
   },
   created: function() {

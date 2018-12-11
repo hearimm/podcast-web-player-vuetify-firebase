@@ -46,11 +46,11 @@
 
     <v-footer app height="49">
       <v-layout fill-height>
-        <v-icon>skip_previous</v-icon>
-        <v-icon>play_arrow</v-icon>
-        <v-icon>skip_next</v-icon>
-        <v-icon>shuffle</v-icon>
-        <v-icon>repeat</v-icon>
+        <v-btn icon><v-icon>skip_previous</v-icon></v-btn>
+        <v-btn icon><v-icon>play_arrow</v-icon></v-btn>
+        <v-btn icon><v-icon>skip_next</v-icon></v-btn>
+        <v-btn icon><v-icon>shuffle</v-icon></v-btn>
+        <v-btn icon><v-icon>repeat</v-icon></v-btn>
         <v-flex align-self-center xs12 sm3 row>
           <v-slider class="ml-2 mr-2" style="height: 49px"></v-slider>
         </v-flex>
@@ -80,8 +80,48 @@
                 </v-card-title>
               </v-flex>
               <v-spacer></v-spacer>
-              <v-flex align-self-center xs-1 sm-1 md-1>
-                <v-icon>queue_music</v-icon>
+              <v-flex id="playDataFlex" align-self-center xs-1 sm-1 md-1>
+                <v-btn icon @click="showMenu = !showMenu">
+                  <v-icon>queue_music</v-icon>
+                </v-btn>
+                <v-menu
+                  v-model="showMenu"
+                  attach = "#playDataFlex"
+                  top
+                  :close-on-click="false"
+                  :close-on-content-click="false"
+                  offset-y
+                  height="600px"
+                >
+                  <v-card>
+                    <v-toolbar>
+                      Next now
+                    </v-toolbar>
+                    <v-list dense>
+                      <template v-for="(item, index) in queueItems">
+                        <v-list-tile
+                          :key="item.title"
+                          avatar
+                          @click="setNowPlaying({item:item, index: index})"
+                        >
+
+                          <v-list-tile-avatar>
+                            <img src="https://is2-ssl.mzstatic.com/image/thumb/Music71/v4/87/a7/04/87a7040f-c844-b936-533b-aace536687f0/source/30x30bb.jpg">
+                          </v-list-tile-avatar>
+                          <v-list-tile-content>
+                            <v-list-tile-content>{{ item. title }}</v-list-tile-content>
+                            <v-list-tile-content>{{ item. published }}</v-list-tile-content>
+                          </v-list-tile-content>
+                          <v-list-tile-action>
+                            <v-btn icon @click.stop="removePlaylist(index)">
+                              <v-icon>close</v-icon>
+                            </v-btn>
+                          </v-list-tile-action>
+                        </v-list-tile>
+                      </template>
+                    </v-list>
+                  </v-card>
+                </v-menu>
               </v-flex>
             </v-layout>
           </v-card>
@@ -97,10 +137,18 @@ export default {
   data() {
     return {
       drawer: false,
+      showMenu: false,
       search: ""
     };
   },
-
+  computed: {
+    queueItems() {
+      return this.$store.getters.queueItems;
+    },
+    nowPlaying() {
+      return this.$store.getters.nowPlaying;
+    }
+  },
   methods: {
     submitSearch() {
       this.axios
@@ -113,6 +161,12 @@ export default {
         .catch(error => {
           console.log(error);
         });
+    },
+    setNowPlaying(payload) {
+      return this.$store.dispatch("setNowPlaying", payload);
+    },
+    removePlaylist(index) {
+      return this.$store.dispatch("removePlaylist", index);
     }
   }
 };
