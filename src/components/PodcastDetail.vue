@@ -35,7 +35,7 @@
       <v-flex xs12 sm6 offset-sm3>
         <v-combobox
           v-model="chips"
-          :items="items"
+          :items="chipsItems"
           label="배성재의 텐 출연진 필터"
           chips
           clearable
@@ -55,18 +55,34 @@
       </v-flex>
 
       <v-flex xs12 sm6 offset-sm3>
+        <v-toolbar color="white" flat>
+          <v-spacer></v-spacer>
+          <v-btn @click="playListAddSelected" v-if="selected.length > 0">Add Selected</v-btn>
+          <v-btn @click="playListAddAll" v-else>Add All</v-btn>
+        </v-toolbar>
         <v-data-table
           :headers="headers"
           :items="episodes"
+          item-key="enclosure.url"
           :pagination.sync="pagination"
+          ripple
+          select-all
+          v-model="selected"
           class="elevation-1"
         >
           <template slot="items" slot-scope="props">
+            <td>
+              <v-checkbox
+                hide-details
+                primary
+                v-model="props.selected"
+              ></v-checkbox>
+            </td>
             <td class="text-xs-left">{{ props.item.title }}</td>
-            <td class="text-xs-right">{{ props.item.published }}</td>
-            <td >
-              <v-btn>
-                <v-icon @click="addPlaylist(props.item)">playlist_add</v-icon>
+            <td class="text-xs-right">{{ props.item.published | date }}</td>
+            <td>
+              <v-btn icon samll>
+                <v-icon @click="playListAdd(props.item)" color="grey darken-1">playlist_add</v-icon>
               </v-btn>
             </td>
           </template>
@@ -88,7 +104,8 @@ export default {
       show: false,
       pagination: {},
       chips: [],
-      items: ["윤태진", "김소혜", "주시은"],
+      chipsItems: ["윤태진", "김소혜", "주시은"],
+      selected: [],
       headers: [
         {
           text: "Title",
@@ -104,15 +121,9 @@ export default {
   },
   computed: {
     pages() {
-      if (
-        this.pagination.rowsPerPage == null ||
-        this.pagination.totalItems == null
-      )
+      if (this.pagination.rowsPerPage == null || this.episodes.length == null)
         return 0;
-
-      return Math.ceil(
-        this.pagination.totalItems / this.pagination.rowsPerPage
-      );
+      return Math.ceil(this.episodes.length / this.pagination.rowsPerPage);
     },
     loading() {
       return this.$store.getters.loading;
@@ -162,15 +173,18 @@ export default {
       this.chips.splice(this.chips.indexOf(item), 1);
       this.chips = [...this.chips];
     },
-    addPlaylist(item) {
-      this.$store.dispatch("addPlaylist", item);
+    playListAdd(item) {
+      this.$store.dispatch("playListAdd", item);
+    },
+    playListAddAll() {
+      this.$store.dispatch("playListAddAll", this.episodes);
+    },
+    playListAddSelected() {
+      this.$store.dispatch("playListAddAll", this.selected);
     }
   },
   created: function() {
-    this.$store
-      .dispatch("loadDetailData", { id: this.id })
-      .then(console.log("loaded"));
-    console.log("loadDetailData");
+    this.$store.dispatch("loadDetailData", { id: this.id });
   }
 };
 </script>

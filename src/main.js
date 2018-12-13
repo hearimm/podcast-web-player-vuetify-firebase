@@ -6,8 +6,10 @@ import router from "./router";
 import store from "./store";
 import firebaseConfig from "./config/firebaseConfig";
 import * as firebase from "firebase";
-require("dotenv").config();
+import DateFilter from "./filters/dateFilter";
 
+require("dotenv").config();
+Vue.filter("date", DateFilter);
 Vue.config.productionTip = false;
 
 console.log(firebaseConfig.API_KEY);
