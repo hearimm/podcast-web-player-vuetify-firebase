@@ -7,31 +7,16 @@
     </v-layout>
     <v-layout row wrap v-else>
       <v-flex xs12 sm6 offset-sm3>
-        <v-card v-for="item in podcasts" :key="item.collectionId" pb-3>
-          <v-img :src="item.artworkUrl600" height="200px"></v-img>
-
-          <v-card-title primary-title>
-            <div>
-              <div class="headline">{{item.collectionName}}</div>
-              <span class="grey--text">{{item.collectionCensoredName}}</span>
+        <v-carousel style="cursor: pointer;">
+          <v-carousel-item
+                  :key="item.id"
+                  :src="item.url"
+                  v-for="(item) in mainImages">
+            <div class="title">
+              {{ item.title }}
             </div>
-          </v-card-title>
-
-          <v-card-actions>
-            <v-btn flat>Share</v-btn>
-            <v-btn flat color="purple" :to="'detail/' + item.collectionId">Explore</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="show = !show">
-              <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
-            </v-btn>
-          </v-card-actions>
-
-          <v-slide-y-transition>
-            <v-card-text
-              v-show="show"
-            >I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.</v-card-text>
-          </v-slide-y-transition>
-        </v-card>
+          </v-carousel-item>
+        </v-carousel>
       </v-flex>
     </v-layout>
   </v-container>
@@ -40,13 +25,28 @@
 <script>
 export default {
   data: () => ({
-    show: false,
-    search: ""
+    mainImages: [
+      {
+        id: "1",
+        url:
+          "https://scontent-icn1-1.cdninstagram.com/vp/0fa0368093f958a05f63d2bb72b2fb2f/5C98B709/t51.2885-15/e35/46891549_272363153445146_7627318773272466048_n.jpg?_nc_ht=scontent-icn1-1.cdninstagram.com",
+        title: "1"
+      },
+      {
+        id: "2",
+        url:
+          "https://scontent-icn1-1.cdninstagram.com/vp/898261193ade631252b5eab9adedc723/5C902E06/t51.2885-15/e35/46687793_320924465174665_4367334844889395566_n.jpg?_nc_ht=scontent-icn1-1.cdninstagram.com",
+        title: "2"
+      },
+      {
+        id: "3",
+        url:
+          "https://scontent-icn1-1.cdninstagram.com/vp/9f800a8dae06dfe9efbea144077d0191/5C9591E6/t51.2885-15/e35/45426934_2622627491081034_7573423875318903053_n.jpg?_nc_ht=scontent-icn1-1.cdninstagram.com",
+        title: "3"
+      }
+    ]
   }),
   computed: {
-    podcasts() {
-      return this.$store.getters.podcasts;
-    },
     loading() {
       return this.$store.getters.loading;
     }

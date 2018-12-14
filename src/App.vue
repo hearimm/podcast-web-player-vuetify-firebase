@@ -19,6 +19,25 @@
             <v-list-tile-title>Contact</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+
+        <v-list-tile to="/auth" v-if="!isUserAuthenticated">
+          <v-list-tile-action>
+            <v-icon>exit_to_app</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>SignIn</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
+        <v-list-tile @click="signOut"
+                     v-if="isUserAuthenticated">
+          <v-list-tile-action>
+            <v-icon>exit_to_app</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>SignOut</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar color="indigo" dark fixed app>
@@ -237,6 +256,12 @@ export default {
     };
   },
   computed: {
+    isUserAuthenticated() {
+      return (
+        this.$store.getters["user/user"] !== null &&
+        this.$store.getters["user/user"] !== undefined
+      );
+    },
     queueItems: {
       get() {
         return this.$store.getters.queueItems;
@@ -266,6 +291,9 @@ export default {
     }
   },
   methods: {
+    signOut() {
+      this.$store.dispatch("user/signOut");
+    },
     submitSearch() {
       this.axios
         .get(
@@ -273,6 +301,7 @@ export default {
         )
         .then(response => {
           this.$store.dispatch("setPodcast", response.data.results);
+          this.$router.push("/searchResult");
         })
         .catch(error => {
           console.log(error);

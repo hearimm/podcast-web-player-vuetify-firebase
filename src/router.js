@@ -2,6 +2,9 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "./components/Home.vue";
 import PodcastDetail from "./components/PodcastDetail";
+import Auth from "./components/Auth.vue";
+import AuthSuccess from "./components/AuthSuccess.vue";
+import SearchResult from "./components/SearchResult.vue";
 
 Vue.use(Router);
 
@@ -14,6 +17,9 @@ export default new Router({
       name: "home",
       component: Home
     },
+    {path: "/auth", name: "auth", component: Auth},
+    {path: "/success", name: "authSuccess", component: AuthSuccess},
+    {path: "/searchResult", name: "authSuccess", component: SearchResult},
     {
       path: "/detail/:id",
       name: "detail",

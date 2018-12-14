@@ -1,8 +1,9 @@
 // import * as firebase from "firebase";
 import Vue from "vue";
 import Vuex from "vuex";
-import podcastData from "./test/resources/podcasts";
-import podcastDetailData from "./test/resources/podcastsDetail";
+import podcastData from "../test/resources/podcasts";
+import podcastDetailData from "../test/resources/podcastsDetail";
+import user from "./modules/user";
 
 Vue.use(Vuex);
 
@@ -207,5 +208,8 @@ export default new Vuex.Store({
     repeat(state) {
       return state.repeat;
     }
+  },
+  modules: {
+    user
   }
 });
