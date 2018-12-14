@@ -142,7 +142,7 @@
                   v-model="menu"
                 >
                   <v-card height="660px" width="480px">
-                    <v-layout>
+                    <v-layout fluid>
                     <v-toolbar>
                       <v-toolbar-title>Next up</v-toolbar-title>
                       <v-spacer></v-spacer>
