@@ -161,7 +161,7 @@
                       id="scroll-target"
                       pa-0
                     >
-                      <v-layout>
+                      <v-layout fluid>
                         <draggable :options="{handle:'.my-handle'}"
                                    id="123"
                                    v-model="queueItems">
