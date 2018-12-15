@@ -53,6 +53,7 @@
           color="white"
           hide-details
           v-model="search"
+          @keyup.enter="submitSearch"
           @click:append="submitSearch"
         ></v-text-field>
       </v-layout>
@@ -70,10 +71,12 @@
         <v-btn @click.stop="skipPrevious" icon>
           <v-icon>skip_previous</v-icon>
         </v-btn>
+        <v-btn @click="audioReplay(10)" icon><v-icon>replay_10</v-icon></v-btn>
         <v-btn @click.stop="playing ? pause() : play()" icon>
           <v-icon v-if="!playing || paused">play_arrow</v-icon>
           <v-icon v-else>pause</v-icon>
         </v-btn>
+        <v-btn @click="audioForward(30)" icon><v-icon>forward_30</v-icon></v-btn>
         <v-btn @click.stop="skipNext" icon>
           <v-icon>skip_next</v-icon>
         </v-btn>
@@ -106,7 +109,7 @@
             <v-layout row fill-height>
               <v-flex align-self-center xs-1 sm-1 md-1>
                 <v-img
-                  src="https://is2-ssl.mzstatic.com/image/thumb/Music71/v4/87/a7/04/87a7040f-c844-b936-533b-aace536687f0/source/30x30bb.jpg"
+                  src="http://img2.sbs.co.kr/sbs_img/2016/03/25/1400x1400_ten.png"
                   height="30px"
                   width="30px"
                   contain
@@ -127,7 +130,7 @@
               <!--queue-->
 
               <v-flex align-self-center id="flex" md-1 sm-1 xs-1>
-                <v-btn @click="menu = !menu" icon id="anchor">
+                <v-btn :class="menu ? 'primary':''" @click="menu = !menu" icon id="anchor">
                   <v-icon>queue_music</v-icon>
                 </v-btn>
 
@@ -297,7 +300,9 @@ export default {
     submitSearch() {
       this.axios
         .get(
-          `https://itunes.apple.com/search?term=${this.search}&entity=podcast`
+          `https://itunes.apple.com/search?term=${
+            this.search
+          }&entity=podcast&country=KR`
         )
         .then(response => {
           this.$store.dispatch("setPodcast", response.data.results);
@@ -335,6 +340,12 @@ export default {
     skipPrevious() {
       console.log("skipPrevious");
       this.$store.dispatch("skipPrevious");
+    },
+    audioReplay(val) {
+      this.audio.currentTime -= val;
+    },
+    audioForward(val) {
+      this.audio.currentTime += val;
     },
     setPosition() {
       this.audio.currentTime = parseInt(
@@ -428,17 +439,6 @@ export default {
     console.log(this.$refs.player);
     this.audio = this.$refs.player;
     this.init();
-
-    // let el = document.getElementById("list-in");
-    // const _self = this;
-    //
-    // Sortable.create(el, {
-    //   handle: ".my-handle", // Drag handle selector within list items
-    //   onEnd({ newIndex, oldIndex }) {
-    //     const rowSelected = _self.queueItems.splice(oldIndex, 1)[0];
-    //     _self.queueItems.splice(newIndex, 0, rowSelected);
-    //   }
-    // });
   },
   beforeDestroy() {
     this.audio.removeEventListener("timeupdate", this._handlePlayingUI);

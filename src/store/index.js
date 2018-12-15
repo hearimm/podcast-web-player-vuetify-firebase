@@ -1,8 +1,8 @@
-// import * as firebase from "firebase";
+import * as firebase from "firebase";
 import Vue from "vue";
 import Vuex from "vuex";
-import podcastData from "../test/resources/podcasts";
-import podcastDetailData from "../test/resources/podcastsDetail";
+// import podcastData from "../test/resources/podcasts";
+// import podcastDetailData from "../test/resources/podcastsDetail";
 import user from "./modules/user";
 
 Vue.use(Vuex);
@@ -10,8 +10,9 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     loading: false,
-    podcasts: podcastData.data,
-    detailData: podcastDetailData.data,
+    podcasts: [],
+    detailData: null,
+    lookupData: null,
     queueItems: [],
     repeat: "",
     nowPlaying: {
@@ -35,6 +36,9 @@ export default new Vuex.Store({
     },
     setPodcast(state, payload) {
       state.podcasts = payload;
+    },
+    setLookupData(state, payload) {
+      state.lookupData = payload;
     },
     setPlayList(state, payload) {
       console.log(payload);
@@ -105,26 +109,30 @@ export default new Vuex.Store({
     setLoading({ commit }, payload) {
       commit("setLoading", payload);
     },
+    setLookupData({ commit }, payload) {
+      commit("setLookupData", payload);
+    },
     setPodcast({ commit }, payload) {
       commit("setPodcast", payload);
     },
     loadDetailData({ commit }, payload) {
       console.log(payload);
-      commit("setDetailData", podcastDetailData.data);
-      // commit("setLoading", true);
-      // firebase
-      //   .database()
-      //   .ref("podcasts/collectionId/")
-      //   .child(payload.id)
-      //   .once("value")
-      //   .then(snapshot => {
-      //     commit("setDetailData", snapshot.val());
-      //     commit("setLoading", false);
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //     // commit("setLoading", false);
-      //   });
+      // commit("setDetailData", podcastDetailData.data);
+      commit("setLoading", true);
+      firebase
+        .database()
+        .ref("podcasts/collectionId/")
+        .child(payload.id)
+        .once("value")
+        .then(snapshot => {
+          commit("setDetailData", snapshot.val());
+          commit("setLoading", false);
+        })
+        .catch(error => {
+          console.log(error);
+          commit("setDetailData", null);
+          commit("setLoading", false);
+        });
     },
     setPlayList({ commit }, payload) {
       commit("setPlayList", payload);
@@ -195,6 +203,9 @@ export default new Vuex.Store({
     },
     podcasts(state) {
       return state.podcasts;
+    },
+    lookupData(state) {
+      return state.lookupData;
     },
     detailData(state) {
       return state.detailData;

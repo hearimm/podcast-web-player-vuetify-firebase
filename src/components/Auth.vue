@@ -14,25 +14,28 @@
   </v-container>
 </template>
 <script>
-  import firebase from "firebase";
-  import * as firebaseui from "firebaseui";
-  // import "firebaseui/dist/firebaseui.css";
-  export default {
-    name: "auth",
-    mounted() {
-      const uiConfig = {
-        signInSuccessUrl: "/success",
-        signInOptions: [
-          // List of OAuth providers supported.
-          firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-          firebase.auth.EmailAuthProvider.PROVIDER_ID // Other providers don't need to be given as object.
-        ]
-      };
-      var ui = new firebaseui.auth.AuthUI(firebase.auth());
-      ui.start("#firebaseui-auth-container", uiConfig);
+import firebase from "firebase";
+import * as firebaseui from "firebaseui";
+// import "firebaseui/dist/firebaseui.css";
+export default {
+  name: "auth",
+  mounted() {
+    const uiConfig = {
+      signInSuccessUrl: "/",
+      signInOptions: [
+        // List of OAuth providers supported.
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.EmailAuthProvider.PROVIDER_ID // Other providers don't need to be given as object.
+      ]
+    };
+    let ui = firebaseui.auth.AuthUI.getInstance();
+    if (!ui) {
+      ui = new firebaseui.auth.AuthUI(firebase.auth());
     }
-  };
+    ui.start("#firebaseui-auth-container", uiConfig);
+  }
+};
 </script>
 <style scoped>
-  @import "../../node_modules/firebaseui/dist/firebaseui.css";
+@import "../../node_modules/firebaseui/dist/firebaseui.css";
 </style>

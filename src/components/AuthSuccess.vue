@@ -12,24 +12,24 @@
   </div>
 </template>
 <script>
-  import firebase from "firebase";
+import firebase from "firebase";
 
-  export default {
-    computed: {
-      user() {
-        return this.$store.getters["user/user"];
-      }
-    },
-    methods: {
-      logOut() {
-        console.log("logout");
-        firebase
-          .auth()
-          .signOut()
-          .then(() => {
-            this.$router.push("/");
-          });
-      }
+export default {
+  computed: {
+    user() {
+      return this.$store.getters["user/user"];
     }
-  };
+  },
+  methods: {
+    logOut() {
+      console.log("logout");
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.$router.push("/");
+        });
+    }
+  }
+};
 </script>

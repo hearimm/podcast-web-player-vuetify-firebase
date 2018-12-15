@@ -11,10 +11,10 @@ const mutations = {
 };
 
 const actions = {
-  setUser: ({commit}, payload) => {
+  setUser: ({ commit }, payload) => {
     commit("setUser", payload);
   },
-  signOut({commit}) {
+  signOut({ commit }) {
     firebase.auth().signOut();
     commit("setUser", null);
   }

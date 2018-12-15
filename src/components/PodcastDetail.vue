@@ -5,30 +5,30 @@
         <v-progress-circular indeterminate color="primary" :width="7" :size="70" v-if="loading"></v-progress-circular>
       </v-flex>
     </v-layout>
-    <v-layout row wrap v-else>
+    <v-layout row v-if="!loading && (lookupData === null || lookupData === undefined)" wrap>
+      <v-alert
+        :value="true"
+        type="warning"
+      >
+        조회된 결과가 없습니다
+      </v-alert>
+    </v-layout>
+    <v-layout row v-if="!loading && lookupData !== null && lookupData !== undefined" wrap>
       <v-flex xs12 sm6 mb-2 offset-sm3>
         <v-card>
-          <v-img :src="detailData.image" height="300px" contain></v-img>
+          <v-img :src="lookupData.artworkUrl600" contain height="300px"></v-img>
 
           <v-card-title primary-title>
             <div>
-              <div class="headline">{{detailData.title}}</div>
-              <span class="grey--text">{{detailData.description.short}}</span>
+              <div class="headline">{{lookupData.collectionName}}</div>
+              <span class="grey--text">{{lookupData.collectionCensoredName}}</span>
             </div>
           </v-card-title>
 
           <v-card-actions>
-            <v-btn flat>Share</v-btn>
-            <v-btn flat color="purple">Explore</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="show = !show">
-              <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
-            </v-btn>
+            <!--<v-btn flat>Share</v-btn>-->
+            <v-btn color="purple" flat>구독</v-btn>
           </v-card-actions>
-
-          <v-slide-y-transition>
-            <v-card-text v-show="show">{{detailData.description.long}}</v-card-text>
-          </v-slide-y-transition>
         </v-card>
       </v-flex>
       <v-divider inset></v-divider>
@@ -36,14 +36,14 @@
         <v-combobox
           v-model="chips"
           :items="chipsItems"
-          label="배성재의 텐 출연진 필터"
+          :label="lookupData.collectionName +' 제목 필터'"
           chips
           clearable
           prepend-icon="filter_list"
           solo
           multiple
         >
-          <template slot="no-data">
+          <template slot="no-data" v-if="chipsItems.length > 0">
             <v-alert :value="true" color="error" icon="warning">Sorry, nothing to display here :(</v-alert>
           </template>
           <template slot="selection" slot-scope="data">
@@ -55,7 +55,7 @@
       </v-flex>
 
       <v-flex xs12 sm6 offset-sm3>
-        <v-toolbar color="white" flat>
+        <v-toolbar color="white" flat v-if="episodes.length > 0">
           <v-spacer></v-spacer>
           <v-btn @click="playListAddSelected" v-if="selected.length > 0">Add Selected</v-btn>
           <v-btn @click="playListAddAll" v-else>Add All</v-btn>
@@ -70,6 +70,20 @@
           v-model="selected"
           class="elevation-1"
         >
+          <template slot="no-data">
+              <div>
+                <v-alert
+                  :value="true"
+                  type="error"
+                >
+                  관리자에게 요청해주세요 :(
+                </v-alert>
+
+                <div class="text-xs-center">
+                  <v-btn :disabled="rssReqComplete" @click="rssAddRequest" class="primary" flat>RSS Add</v-btn>
+                </div>
+              </div>
+          </template>
           <template slot="items" slot-scope="props">
             <td>
               <v-checkbox
@@ -96,25 +110,24 @@
 </template>
 
 <script>
+import * as firebase from "firebase";
+
 export default {
   name: "PodcastDetail",
   props: ["id"],
   data() {
     return {
       show: false,
-      pagination: {},
+      rssReqComplete: false,
+      lookupData: null,
+      pagination: { sortBy: "published", descending: true },
       chips: [],
-      chipsItems: ["윤태진", "김소혜", "주시은"],
+      chipsItems: ["아재", "윤태진", "김소혜", "주시은"],
       selected: [],
       headers: [
-        {
-          text: "Title",
-          align: "left",
-          sortable: false,
-          value: "name"
-        },
-        { text: "Published", value: "published" },
-        { text: "action", sortable: false, value: "action" }
+        { text: "Title", align: "left", sortable: false, value: "name" },
+        { text: "Published", align: "center", value: "published" },
+        { text: "action", sortable: false, value: "action", width: "52" }
       ],
       feedData: null
     };
@@ -138,6 +151,11 @@ export default {
       return this.$store.getters.detailData;
     },
     episodes() {
+      console.log(this.detailData);
+      if (this.detailData === null || this.detailData === undefined) {
+        return [];
+      }
+
       if (this.chips.length > 0) {
         return this.$store.getters.detailData.episodes.filter(x => {
           for (let key in this.chips) {
@@ -181,9 +199,57 @@ export default {
     },
     playListAddSelected() {
       this.$store.dispatch("playListAddAll", this.selected);
+    },
+    rssAddRequest() {
+      firebase
+        .database()
+        .ref("rssRequest/collectionId/")
+        .child(this.id)
+        .update({
+          collectionName: this.lookupData.collectionName,
+          feedUrl: this.lookupData.feedUrl
+        })
+        .then(() => {
+          this.rssReqComplete = true;
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   },
-  created: function() {
+  mounted: function() {
+    console.log("mounted");
+    this.axios
+      .get(
+        `https://itunes.apple.com/lookup?id=
+        ${this.id}
+        &entity=podcast&country=KR`
+      )
+      .then(response => {
+        console.log("resp");
+        this.lookupData = response.data.results[0];
+        this.$store.dispatch("setLookupData", response.data.results[0]);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    firebase
+      .database()
+      .ref("chips/collectionId/")
+      .child(this.id)
+      .once("value")
+      .then(snapshot => {
+        console.log(snapshot);
+        if (snapshot.val()) {
+          this.chipsItems = snapshot.val();
+        } else {
+          this.chipsItems = [];
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
     this.$store.dispatch("loadDetailData", { id: this.id });
   }
 };
