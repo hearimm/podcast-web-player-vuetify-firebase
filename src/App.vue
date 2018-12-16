@@ -293,9 +293,9 @@ export default {
     submitSearch() {
       this.axios
         .get(
-          `https://itunes.apple.com/search?term=${
+          `https://express-test-hyuk.herokuapp.com/api/itunesSearch?search=${
             this.search
-          }&entity=podcast&country=KR`
+          }`
         )
         .then(response => {
           this.$store.dispatch("setPodcast", response.data.results);

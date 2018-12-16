@@ -245,9 +245,7 @@ export default {
     console.log("mounted");
     this.axios
       .get(
-        `https://itunes.apple.com/lookup?id=
-        ${this.id}
-        &entity=podcast&country=KR`
+        `https://express-test-hyuk.herokuapp.com/api/itunesLookup?id=${this.id}`
       )
       .then(response => {
         console.log("resp");
