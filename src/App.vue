@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" fixed app>
+    <v-navigation-drawer v-model="sideNav" fixed app>
       <v-list dense>
         <v-list-tile to="/">
           <v-list-tile-action>
@@ -29,8 +29,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile @click="signOut"
-                     v-if="isUserAuthenticated">
+        <v-list-tile @click="signOut" v-if="isUserAuthenticated">
           <v-list-tile-action>
             <v-icon>exit_to_app</v-icon>
           </v-list-tile-action>
@@ -41,7 +40,7 @@
       </v-list>
     </v-navigation-drawer>
     <v-toolbar color="indigo" dark fixed app>
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-side-icon @click.stop="sideNav = !sideNav"></v-toolbar-side-icon>
       <v-toolbar-title>배가놈의 텐</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-layout row align-center style="max-width: 650px">
@@ -66,17 +65,27 @@
 
     <v-footer app height="49" id="footer">
       <v-layout fill-height>
-        <audio :loop="repeat === 'repeat_one'" :src="nowPlaying.src" controls hidden id="player"
-               ref="player"></audio>
+        <audio
+          :loop="repeat === 'repeat_one'"
+          :src="nowPlaying.src"
+          controls
+          hidden
+          id="player"
+          ref="player"
+        ></audio>
         <v-btn @click.stop="skipPrevious" icon>
           <v-icon>skip_previous</v-icon>
         </v-btn>
-        <v-btn @click="audioReplay(10)" icon><v-icon>replay_10</v-icon></v-btn>
+        <v-btn @click="audioReplay(10)" icon>
+          <v-icon>replay_10</v-icon>
+        </v-btn>
         <v-btn @click.stop="playing ? pause() : play()" icon>
           <v-icon v-if="!playing || paused">play_arrow</v-icon>
           <v-icon v-else>pause</v-icon>
         </v-btn>
-        <v-btn @click="audioForward(30)" icon><v-icon>forward_30</v-icon></v-btn>
+        <v-btn @click="audioForward(30)" icon>
+          <v-icon>forward_30</v-icon>
+        </v-btn>
         <v-btn @click.stop="skipNext" icon>
           <v-icon>skip_next</v-icon>
         </v-btn>
@@ -95,7 +104,8 @@
             class="ml-2 mr-2"
             style="height: 49px"
             v-model="percentage"
-            validate-on-blur></v-slider>
+            validate-on-blur
+          ></v-slider>
         </v-flex>
         <v-btn :disabled="true" icon>{{duration}}</v-btn>
         <v-btn :disabled="!loaded" @click.native="mute()" icon>
@@ -128,12 +138,10 @@
               </v-flex>
               <v-spacer></v-spacer>
               <!--queue-->
-
               <v-flex align-self-center id="flex" md-1 sm-1 xs-1>
                 <v-btn :class="menu ? 'primary':''" @click="menu = !menu" icon id="anchor">
                   <v-icon>queue_music</v-icon>
                 </v-btn>
-
 
                 <v-menu
                   :position-x="100"
@@ -146,73 +154,61 @@
                 >
                   <v-card height="660px" width="480px">
                     <v-layout fluid>
-                    <v-toolbar>
-                      <v-toolbar-title>Next up</v-toolbar-title>
-                      <v-spacer></v-spacer>
-                      <v-btn @click="clearPlayList">
-                        clear
-                      </v-btn>
-                      <v-btn @click="menu = false" flat icon>
-                        <v-icon>
-                          close
-                        </v-icon>
-                      </v-btn>
-                    </v-toolbar>
+                      <v-toolbar>
+                        <v-toolbar-title>Next up</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-btn @click="clearPlayList">clear</v-btn>
+                        <v-btn @click="menu = false" flat icon>
+                          <v-icon>close</v-icon>
+                        </v-btn>
+                      </v-toolbar>
                     </v-layout>
-                    <v-container
-                      class="scroll-y"
-                      id="scroll-target"
-                      pa-0
-                    >
+                    <v-container class="scroll-y" id="scroll-target" pa-0>
                       <v-layout fluid>
-                        <draggable :options="{handle:'.my-handle'}"
-                                   id="123"
-                                   v-model="queueItems">
-                          <v-list :key="item.enclosure.url + '_' + index"
-                                  class="pa-0"
-                                  v-for="(item, index) in queueItems"
+                        <draggable :options="{handle:'.my-handle'}" id="123" v-model="queueItems">
+                          <v-list
+                            :key="item.enclosure.url + '_' + index"
+                            class="pa-0"
+                            v-for="(item, index) in queueItems"
                           >
                             <div>
-                        <v-list-tile
-                          :class="index == nowPlaying.index? 'grey lighten-2':''"
-                          :key="item.enclosure.url + '_' + index"
+                              <v-list-tile
+                                :class="index == nowPlaying.index? 'grey lighten-2':''"
+                                :key="item.enclosure.url + '_' + index"
+                                @click.stop="playItem({index:index, item:item})"
+                                style="cursor: pointer"
+                              >
+                                <v-list-tile-action style="opacity: 0.5">
+                                  <v-btn class="my-handle" flat icon style="cursor: move">
+                                    <v-icon>more_vert</v-icon>
+                                  </v-btn>
+                                </v-list-tile-action>
 
-                          @click.stop="playItem({index:index, item:item})"
-                          style="cursor: pointer"
-                        >
-
-
-                          <v-list-tile-action style="opacity: 0.5">
-                            <v-btn class="my-handle" flat icon style="cursor: move">
-                              <v-icon>
-                                more_vert
-                              </v-icon>
-                            </v-btn>
-                          </v-list-tile-action>
-
-
-                          <!--<v-list-tile-avatar :class="index < nowPlaying.index? 'before-queue':''">-->
-                          <!--<img src="http://img2.sbs.co.kr/sbs_img/2016/03/25/1400x1400_ten.png">-->
-                          <!--</v-list-tile-avatar>-->
-                          <v-list-tile-content :class="index < nowPlaying.index? 'before-queue':''">
-                            <v-list-tile-title style="font-size: 12px">{{item.title}}</v-list-tile-title>
-                            <v-list-tile-title class="grey--text" style="font-size: 12px">{{item.published | date}}
-                            </v-list-tile-title>
-                          </v-list-tile-content>
-                          <v-spacer></v-spacer>
-                          <v-list-tile-action>
-                            <v-btn @click.stop="playListRemoveIndex(index)" flat icon v-if="nowPlaying.index != index">
-                              <v-icon small>
-                                close
-                              </v-icon>
-                            </v-btn>
-                          </v-list-tile-action>
-
-                        </v-list-tile>
-                              <v-divider
-                                :key="index"
-                                v-if="index + 1 < queueItems.length"
-                              ></v-divider>
+                                <!--<v-list-tile-avatar :class="index < nowPlaying.index? 'before-queue':''">-->
+                                <!--<img src="http://img2.sbs.co.kr/sbs_img/2016/03/25/1400x1400_ten.png">-->
+                                <!--</v-list-tile-avatar>-->
+                                <v-list-tile-content
+                                  :class="index < nowPlaying.index? 'before-queue':''"
+                                >
+                                  <v-list-tile-title style="font-size: 12px">{{item.title}}</v-list-tile-title>
+                                  <v-list-tile-title
+                                    class="grey--text"
+                                    style="font-size: 12px"
+                                  >{{item.published | date}}</v-list-tile-title>
+                                </v-list-tile-content>
+                                <v-spacer></v-spacer>
+                                <v-list-tile-action>
+                                  <v-btn
+                                    @click.stop="playListRemoveIndex(index)"
+                                    flat
+                                    icon
+                                    v-if="nowPlaying.index != index"
+                                  >
+                                    <v-icon small>close</v-icon>
+                                  </v-btn>
+                                </v-list-tile-action>
+                              </v-list-tile>
+                              <v-divider :key="index" v-if="index + 1 < queueItems.length"></v-divider>
                             </div>
                           </v-list>
                         </draggable>
@@ -242,7 +238,7 @@ export default {
   },
   data() {
     return {
-      drawer: false,
+      sideNav: false,
       menu: false,
       search: "",
       autoPlay: true,
@@ -260,10 +256,7 @@ export default {
   },
   computed: {
     isUserAuthenticated() {
-      return (
-        this.$store.getters["user/user"] !== null &&
-        this.$store.getters["user/user"] !== undefined
-      );
+      return this.$store.getters["user/isUserAuthenticated"];
     },
     queueItems: {
       get() {

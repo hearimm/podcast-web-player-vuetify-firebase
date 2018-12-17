@@ -6,12 +6,7 @@
       </v-flex>
     </v-layout>
     <v-layout row v-if="!loading && (lookupData === null || lookupData === undefined)" wrap>
-      <v-alert
-        :value="true"
-        type="warning"
-      >
-        조회된 결과가 없습니다
-      </v-alert>
+      <v-alert :value="true" type="warning">조회된 결과가 없습니다</v-alert>
     </v-layout>
     <v-layout row v-if="!loading && lookupData !== null && lookupData !== undefined" wrap>
       <v-flex xs12 sm6 mb-2 offset-sm3>
@@ -27,7 +22,8 @@
 
           <v-card-actions>
             <!--<v-btn flat>Share</v-btn>-->
-            <v-btn color="purple" flat>구독</v-btn>
+            <v-btn v-if="isSubscribes" color="purple" flat @click="unsubscribe">구독해지</v-btn>
+            <v-btn v-else color="purple" flat @click="subscribe">구독</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -71,26 +67,22 @@
           class="elevation-1"
         >
           <template slot="no-data">
-              <div>
-                <v-alert
-                  :value="true"
-                  type="error"
-                >
-                  관리자에게 요청해주세요 :(
-                </v-alert>
+            <div>
+              <v-alert :value="true" type="error">관리자에게 요청해주세요 :(</v-alert>
 
-                <div class="text-xs-center">
-                  <v-btn :disabled="rssReqComplete" @click="rssAddRequest" class="primary" flat>RSS Add</v-btn>
-                </div>
+              <div class="text-xs-center">
+                <v-btn
+                  :disabled="rssReqComplete"
+                  @click="rssAddRequest"
+                  class="primary"
+                  flat
+                >RSS Add</v-btn>
               </div>
+            </div>
           </template>
           <template slot="items" slot-scope="props">
             <td>
-              <v-checkbox
-                hide-details
-                primary
-                v-model="props.selected"
-              ></v-checkbox>
+              <v-checkbox hide-details primary v-model="props.selected"></v-checkbox>
             </td>
             <td class="text-xs-left">{{ props.item.title }}</td>
             <td class="text-xs-right">{{ props.item.published | date }}</td>
@@ -133,6 +125,12 @@ export default {
     };
   },
   computed: {
+    isUserAuthenticated() {
+      return this.$store.getters["user/isUserAuthenticated"];
+    },
+    user() {
+      return this.$store.getters["user/user"];
+    },
     pages() {
       if (this.pagination.rowsPerPage == null || this.episodes.length == null)
         return 0;
@@ -168,8 +166,22 @@ export default {
       } else {
         return this.$store.getters.detailData.episodes;
       }
+    },
+    subscribes() {
+      return this.$store.getters["user/subscribes"];
+    },
+    isSubscribes() {
+      console.log("isSubscribes computed");
+
+      for (var key in this.$store.getters["user/subscribes"]) {
+        if (this.$store.getters["user/subscribes"][key] === this.id) {
+          return true;
+        }
+      }
+      return false;
     }
   },
+
   // watch: {
   //   chips: function(list) {
   //     if (list.length > 0) {
@@ -187,6 +199,18 @@ export default {
   //   }
   // },
   methods: {
+    unsubscribe() {
+      if (this.isUserAuthenticated) {
+        this.$store.dispatch("user/unsubscribe", this.id);
+      }
+    },
+    subscribe() {
+      if (this.isUserAuthenticated) {
+        this.$store.dispatch("user/subscribe", this.id);
+      } else {
+        console.log("modal login 할거야?");
+      }
+    },
     remove(item) {
       this.chips.splice(this.chips.indexOf(item), 1);
       this.chips = [...this.chips];

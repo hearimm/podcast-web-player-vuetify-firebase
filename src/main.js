@@ -20,7 +20,7 @@ new Vue({
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.$store.dispatch("user/setUser", firebase.auth().currentUser);
-        this.$router.push("/");
+        this.$store.dispatch("user/fetchUserData");
       } else {
         // this.$router.push('/auth')
       }

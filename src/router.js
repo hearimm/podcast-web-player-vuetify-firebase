@@ -17,9 +17,9 @@ export default new Router({
       name: "home",
       component: Home
     },
-    {path: "/auth", name: "auth", component: Auth},
-    {path: "/success", name: "authSuccess", component: AuthSuccess},
-    {path: "/searchResult", name: "authSuccess", component: SearchResult},
+    { path: "/auth", name: "auth", component: Auth },
+    { path: "/success", name: "authSuccess", component: AuthSuccess },
+    { path: "/searchResult", name: "authSuccess", component: SearchResult },
     {
       path: "/detail/:id",
       name: "detail",
