@@ -19,7 +19,7 @@ export default new Router({
     },
     { path: "/auth", name: "auth", component: Auth },
     { path: "/success", name: "authSuccess", component: AuthSuccess },
-    { path: "/searchResult", name: "authSuccess", component: SearchResult },
+    { path: "/searchResult", name: "searchResult", component: SearchResult },
     {
       path: "/detail/:id",
       name: "detail",

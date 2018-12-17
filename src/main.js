@@ -5,7 +5,8 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store/index";
 import { config } from "./config/firebaseConfig";
-import * as firebase from "firebase";
+// import * as firebase from "firebase";
+import firebase from "firebase/app";
 import DateFilter from "./filters/dateFilter";
 
 Vue.filter("date", DateFilter);

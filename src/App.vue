@@ -45,7 +45,6 @@
       <v-spacer></v-spacer>
       <v-layout row align-center style="max-width: 650px">
         <v-text-field
-          :append-icon-cb="() => {}"
           placeholder="Search..."
           single-line
           append-icon="search"

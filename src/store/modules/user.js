@@ -21,8 +21,10 @@ const actions = {
   signOut({ commit }) {
     firebase.auth().signOut();
     commit("setUser", null);
+    commit("setSubscribes", null);
   },
   fetchUserData({ commit, getters }) {
+    commit("setLoading", true, { root: true });
     const ref = firebase
       .database()
       .ref("user/")
@@ -33,9 +35,11 @@ const actions = {
       .once("value")
       .then(snapshot => {
         commit("setSubscribes", snapshot.val());
+        commit("setLoading", false, { root: true });
       })
       .catch(error => {
         commit("setSubscribes", null);
+        commit("setLoading", false, { root: true });
         console.log(error);
       });
   },
@@ -62,9 +66,10 @@ const actions = {
       .ref("user/")
       .child(getters.user.uid)
       .child("subscribes");
+
     ref
-      .orderByValue()
-      .equalTo(payload)
+      .orderByChild("collectionId")
+      .equalTo(parseInt(payload))
       .once("value", snapshot => {
         snapshot.forEach(childSnaphost => {
           return childSnaphost.ref.remove();

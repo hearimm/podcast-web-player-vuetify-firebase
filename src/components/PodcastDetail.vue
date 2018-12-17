@@ -23,7 +23,18 @@
           <v-card-actions>
             <!--<v-btn flat>Share</v-btn>-->
             <v-btn v-if="isSubscribes" color="purple" flat @click="unsubscribe">구독해지</v-btn>
-            <v-btn v-else color="purple" flat @click="subscribe">구독</v-btn>
+            <v-btn v-else color="purple" flat @click="addSubscribe">구독</v-btn>
+            <v-dialog v-model="dialog" max-width="290">
+              <v-card>
+                <v-card-title class="headline">구독하시겠습니까?</v-card-title>
+                <v-card-text>구독기능은 로그인 후 사용가능합니다.</v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="green darken-1" flat="flat" @click="dialog = false">취소</v-btn>
+                  <v-btn color="green darken-1" flat="flat" @click="goAuthPage">로그인</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -81,13 +92,13 @@
             </div>
           </template>
           <template slot="items" slot-scope="props">
-            <td>
+            <td class="text-xs-center pa-2">
               <v-checkbox hide-details primary v-model="props.selected"></v-checkbox>
             </td>
-            <td class="text-xs-left">{{ props.item.title }}</td>
-            <td class="text-xs-right">{{ props.item.published | date }}</td>
-            <td>
-              <v-btn icon samll>
+            <td class="text-xs-left pa-0">{{ props.item.title }}</td>
+            <td class="text-xs-center pa-0">{{ props.item.published | date }}</td>
+            <td class="text-xs-center pa-0" style="width:40px">
+              <v-btn icon samll class="ma-0">
                 <v-icon @click="playListAdd(props.item)" color="grey darken-1">playlist_add</v-icon>
               </v-btn>
             </td>
@@ -110,6 +121,7 @@ export default {
   data() {
     return {
       show: false,
+      dialog: false,
       rssReqComplete: false,
       lookupData: null,
       pagination: { sortBy: "published", descending: true },
@@ -117,9 +129,18 @@ export default {
       chipsItems: ["아재", "윤태진", "김소혜", "주시은"],
       selected: [],
       headers: [
-        { text: "Title", align: "left", sortable: false, value: "name" },
-        { text: "Published", align: "center", value: "published" },
-        { text: "action", sortable: false, value: "action", width: "52" }
+        {
+          text: "Title",
+          align: "left",
+          sortable: false,
+          value: "name"
+        },
+        {
+          text: "날짜",
+          align: "center",
+          value: "날짜"
+        },
+        { text: "", sortable: false, value: "" }
       ],
       feedData: null
     };
@@ -174,7 +195,9 @@ export default {
       console.log("isSubscribes computed");
 
       for (var key in this.$store.getters["user/subscribes"]) {
-        if (this.$store.getters["user/subscribes"][key] === this.id) {
+        if (
+          this.$store.getters["user/subscribes"][key].collectionId == this.id
+        ) {
           return true;
         }
       }
@@ -182,33 +205,21 @@ export default {
     }
   },
 
-  // watch: {
-  //   chips: function(list) {
-  //     if (list.length > 0) {
-  //       this.episodes = this.$store.getters.detailData.episodes.filter(x => {
-  //         for (let key in list) {
-  //           if (x.title.indexOf(list[key]) > 0) {
-  //             return true;
-  //           }
-  //         }
-  //         return false;
-  //       });
-  //     } else {
-  //       this.episodes = this.$store.getters.detailData.episodes;
-  //     }
-  //   }
-  // },
   methods: {
+    goAuthPage() {
+      this.dialog = false;
+      this.$router.push("/auth");
+    },
     unsubscribe() {
       if (this.isUserAuthenticated) {
         this.$store.dispatch("user/unsubscribe", this.id);
       }
     },
-    subscribe() {
+    addSubscribe() {
       if (this.isUserAuthenticated) {
-        this.$store.dispatch("user/subscribe", this.id);
+        this.$store.dispatch("user/subscribe", this.lookupData);
       } else {
-        console.log("modal login 할거야?");
+        this.dialog = true;
       }
     },
     remove(item) {
@@ -277,5 +288,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+table.v-table thead td:not(:nth-child(1)),
+table.v-table tbody td:not(:nth-child(1)),
+table.v-table thead th:not(:nth-child(1)),
+table.v-table tbody th:not(:nth-child(1)),
+table.v-table thead td:first-child,
+table.v-table tbody td:first-child,
+table.v-table thead th:first-child,
+table.v-table tbody th:first-child {
+  padding: 0 8px;
+}
 </style>
