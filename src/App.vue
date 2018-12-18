@@ -20,6 +20,15 @@
           </v-list-tile-content>
         </v-list-tile>
 
+        <v-list-tile to="/play">
+          <v-list-tile-action>
+            <v-icon>music_note</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Player</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
         <v-list-tile to="/auth" v-if="!isUserAuthenticated">
           <v-list-tile-action>
             <v-icon>exit_to_app</v-icon>
@@ -37,6 +46,7 @@
             <v-list-tile-title>SignOut</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+        <ContactUs></ContactUs>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar color="indigo" dark fixed app>
@@ -183,9 +193,6 @@
                                   </v-btn>
                                 </v-list-tile-action>
 
-                                <!--<v-list-tile-avatar :class="index < nowPlaying.index? 'before-queue':''">-->
-                                <!--<img src="http://img2.sbs.co.kr/sbs_img/2016/03/25/1400x1400_ten.png">-->
-                                <!--</v-list-tile-avatar>-->
                                 <v-list-tile-content
                                   :class="index < nowPlaying.index? 'before-queue':''"
                                 >
@@ -226,6 +233,7 @@
 
 <script>
 import draggable from "vuedraggable";
+import ContactUs from "./components/ContactUs.vue";
 // import Sortable from "sortablejs";
 
 const formatTime = second =>
@@ -233,12 +241,14 @@ const formatTime = second =>
 export default {
   name: "App",
   components: {
-    draggable
+    draggable,
+    ContactUs
   },
   data() {
     return {
       sideNav: false,
       menu: false,
+      contactUsDialog: false,
       search: "",
       autoPlay: true,
       firstPlay: true,

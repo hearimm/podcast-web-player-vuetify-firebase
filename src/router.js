@@ -5,6 +5,7 @@ import PodcastDetail from "./components/PodcastDetail";
 import Auth from "./components/Auth.vue";
 import AuthSuccess from "./components/AuthSuccess.vue";
 import SearchResult from "./components/SearchResult.vue";
+import Play from "./components/Play.vue";
 
 Vue.use(Router);
 
@@ -20,6 +21,7 @@ export default new Router({
     { path: "/auth", name: "auth", component: Auth },
     { path: "/success", name: "authSuccess", component: AuthSuccess },
     { path: "/searchResult", name: "searchResult", component: SearchResult },
+    { path: "/play", name: "play", component: Play },
     {
       path: "/detail/:id",
       name: "detail",

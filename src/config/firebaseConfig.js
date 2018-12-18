@@ -1,7 +1,7 @@
-export default {
-  VUE_APP_API_KEY: "",
-  VUE_APP_AUTH_DOMAIN: "",
-  VUE_APP_DATABASE_URL: "",
-  VUE_APP_PROJECT_ID: "",
-  VUE_APP_STORAGE_BUCKET: ""
+export const config = {
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  projectId: "",
+  storageBucket: ""
 };
