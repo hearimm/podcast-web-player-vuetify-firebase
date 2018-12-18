@@ -1,9 +1,10 @@
 <template>
   <div v-if="user">
     <h1>Signup succeeded</h1>
-    <button @click='logOut'>Log out</button>
+    <button @click="logOut">Log out</button>
     <hr>
-    <img :src="user.photoURL" style="height:120px"> <br>
+    <img :src="user.photoURL" style="height:120px">
+    <br>
     <p>{{user.displayName}}</p>
     <p>{{user.email}}</p>
     <p>{{user.uid}}</p>
@@ -22,7 +23,6 @@ export default {
   },
   methods: {
     logOut() {
-      console.log("logout");
       firebase
         .auth()
         .signOut()

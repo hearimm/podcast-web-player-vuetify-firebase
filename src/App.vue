@@ -321,7 +321,6 @@ export default {
       this.$store.dispatch("clearPlayList");
     },
     playItem(payload) {
-      console.log(payload.index);
       this.$store.dispatch("playItem", payload);
     },
     skipNext() {
@@ -340,7 +339,6 @@ export default {
       this.$store.dispatch("setRepeat", val);
     },
     skipPrevious() {
-      console.log("skipPrevious");
       this.$store.dispatch("skipPrevious");
     },
     audioReplay(val) {
@@ -437,8 +435,6 @@ export default {
     }
   },
   mounted() {
-    console.log("mounted");
-    console.log(this.$refs.player);
     this.audio = this.$refs.player;
     this.init();
   },

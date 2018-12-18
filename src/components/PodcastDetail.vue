@@ -79,15 +79,16 @@
         >
           <template slot="no-data">
             <div>
-              <v-alert :value="true" type="error">관리자에게 요청해주세요 :(</v-alert>
-
-              <div class="text-xs-center">
+              <div class="text-xs-center" v-if="!isFeedUrlNotWorking">
                 <v-btn
                   :disabled="rssReqComplete"
                   @click="rssAddRequest"
                   class="primary"
                   flat
-                >RSS Add</v-btn>
+                >관리자님 이것도 추가해주세요</v-btn>
+              </div>
+              <div>
+                <v-alert v-if="isFeedUrlNotWorking" :value="true" type="error">팟빵은 안되요 읍읍 :(</v-alert>
               </div>
             </div>
           </template>
@@ -202,6 +203,9 @@ export default {
         }
       }
       return false;
+    },
+    isFeedUrlNotWorking() {
+      return this.lookupData.feedUrl.indexOf("pod.ssenhosting.com") > 0;
     }
   },
 
@@ -250,18 +254,44 @@ export default {
         .catch(error => {
           console.log(error);
         });
+    },
+    isRssRequest() {
+      console.log("isRssRequest");
+
+      firebase
+        .database()
+        .ref("rssRequest/collectionId/")
+
+        .once("value")
+        .then(snapshot => {
+          console.log(snapshot.child(this.id).exists());
+          return snapshot.exists();
+        })
+        .catch(error => {
+          return false;
+          console.log(error);
+        });
     }
   },
   mounted: function() {
-    console.log("mounted");
     this.axios
       .get(
         `https://express-test-hyuk.herokuapp.com/api/itunesLookup?id=${this.id}`
       )
       .then(response => {
-        console.log("resp");
         this.lookupData = response.data.results[0];
         this.$store.dispatch("setLookupData", response.data.results[0]);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    firebase
+      .database()
+      .ref("rssRequest/collectionId/")
+      .once("value")
+      .then(snapshot => {
+        this.rssReqComplete = snapshot.child(this.id).exists();
       })
       .catch(error => {
         console.log(error);
@@ -273,7 +303,6 @@ export default {
       .child(this.id)
       .once("value")
       .then(snapshot => {
-        console.log(snapshot);
         if (snapshot.val()) {
           this.chipsItems = snapshot.val();
         } else {

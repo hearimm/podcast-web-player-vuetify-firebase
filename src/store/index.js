@@ -41,7 +41,6 @@ export default new Vuex.Store({
       state.lookupData = payload;
     },
     setPlayList(state, payload) {
-      console.log(payload);
       state.queueItems = payload;
       state.nowPlaying.index = state.queueItems.findIndex(x => {
         return x.enclosure.url === state.nowPlaying.src;
@@ -70,7 +69,6 @@ export default new Vuex.Store({
       state.nowPlaying.item = "";
     },
     findSetNowPlayingIndex(state) {
-      console.log(state.queueItems[0]);
       state.nowPlaying.index = state.queueItems.findIndex(x => {
         return x.enclosure.url === state.nowPlaying.src;
       });
@@ -116,7 +114,6 @@ export default new Vuex.Store({
       commit("setPodcast", payload);
     },
     loadDetailData({ commit }, payload) {
-      console.log(payload);
       // commit("setDetailData", podcastDetailData.data);
       commit("setLoading", true);
       firebase
@@ -172,7 +169,6 @@ export default new Vuex.Store({
           index: nextIndex,
           item: getters.queueItems[nextIndex]
         };
-        console.log(nextIndex, nextItem);
         commit("playItem", nextItem);
       } else if (getters.repeat == "repeat") {
         let firstItem = { index: 0, item: getters.queueItems[0] };
@@ -186,7 +182,6 @@ export default new Vuex.Store({
           index: beforeIndex,
           item: getters.queueItems[beforeIndex]
         };
-        console.log(beforeIndex, beforeItem);
         commit("playItem", beforeItem);
       }
     },
