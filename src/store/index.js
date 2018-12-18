@@ -4,6 +4,7 @@ import Vuex from "vuex";
 // import podcastData from "../test/resources/podcasts";
 // import podcastDetailData from "../test/resources/podcastsDetail";
 import user from "./modules/user";
+import player from "./modules/player";
 
 Vue.use(Vuex);
 
@@ -216,6 +217,7 @@ export default new Vuex.Store({
     }
   },
   modules: {
-    user
+    user,
+    player
   }
 });

@@ -57,13 +57,13 @@
                 <v-flex>
                   <v-slider
                     :disabled="!loaded"
-                    @click.native="setPosition()"
+                    @click.native="setVolumePosition()"
                     class="ml-2 mr-2"
                     style="height: 49px"
-                    v-model="percentage"
+                    v-model="volumePercentage"
                     prepend-icon="volume_mute"
                     append-icon="volume_up"
-                    validate-on-blur
+                    thumb-label
                   ></v-slider>
                 </v-flex>
               </v-layout>
@@ -142,6 +142,10 @@
 </template>
 <script>
 import draggable from "vuedraggable";
+
+const formatTime = second =>
+  new Date(second * 1000).toISOString().substr(11, 8);
+
 export default {
   components: {
     draggable
@@ -153,18 +157,7 @@ export default {
       collectionCensoredName: "배가배가",
       playTitleName:
         "(화) 배성재의 텐 - 비연애 참피언스리그 (박문성 스포츠해설가)",
-      published: new Date("2016-03-29T13:00:00.000Z").toISOString(),
-      autoPlay: true,
-      firstPlay: true,
-      isMuted: false,
-      loaded: false,
-      playing: false,
-      paused: false,
-      percentage: 0,
-      currentTime: "00:00:00",
-      duration: "00:00:00",
-      audio: undefined,
-      totalDuration: 0
+      published: new Date("2016-03-29T13:00:00.000Z").toISOString()
     };
   },
   computed: {
@@ -253,6 +246,83 @@ export default {
       let item = this.queueItems[this.$store.getters.nowPlaying.index];
       if (item != undefined) return item.title;
       else return "";
+    },
+    duration: function() {
+      return this.audio ? formatTime(this.totalDuration) : "";
+    },
+    repeat() {
+      return this.$store.getters.repeat;
+    },
+    autoPlay() {
+      return this.$store.getters["player/autoPlay"];
+    },
+    firstPlay: {
+      get() {
+        return this.$store.getters["player/firstPlay"];
+      },
+      set(value) {
+        this.$store.dispatch("player/firstPlay", value);
+      }
+    },
+    isMuted() {
+      return this.$store.getters["player/isMuted"];
+    },
+    loaded: {
+      get() {
+        return this.$store.getters["player/loaded"];
+      },
+      set(value) {
+        this.$store.dispatch("player/loaded", value);
+      }
+    },
+    playing: {
+      get() {
+        return this.$store.getters["player/playing"];
+      },
+      set(value) {
+        this.$store.dispatch("player/playing", value);
+      }
+    },
+    paused: {
+      get() {
+        return this.$store.getters["player/paused"];
+      },
+      set(value) {
+        this.$store.dispatch("player/paused", value);
+      }
+    },
+    percentage: {
+      get() {
+        return this.$root.$children[0].percentage;
+      },
+      set(value) {
+        this.$root.$children[0].percentage = value;
+      }
+    },
+    currentTime: {
+      get() {
+        return this.$root.$children[0].currentTime;
+      },
+      set(value) {
+        this.$root.$children[0].currentTime = value;
+      }
+    },
+    totalDuration: {
+      get() {
+        return this.$store.getters["player/totalDuration"];
+      },
+      set(value) {
+        this.$store.dispatch("player/totalDuration", value);
+      }
+    },
+    volumePercentage: {
+      get() {
+        return this.$store.getters["player/volumePercentage"];
+      },
+      set(value) {
+        this.setVolumePosition();
+        this.$store.dispatch("player/volumePercentage", value);
+      }
     }
   },
   watch: {
@@ -270,6 +340,27 @@ export default {
     playItem(payload) {
       console.log(payload.index);
       this.$store.dispatch("playItem", payload);
+    },
+    play() {
+      console.log("play.play()");
+
+      this.$root.$children[0].play();
+    },
+    pause() {
+      console.log("play.pause()");
+      this.$root.$children[0].pause();
+    },
+    audioReplay(val) {
+      this.$root.$children[0].audioReplay(val);
+    },
+    audioForward(val) {
+      this.$root.$children[0].audioForward(val);
+    },
+    setPosition() {
+      this.$root.$children[0].setPosition();
+    },
+    setVolumePosition() {
+      this.$root.$children[0].setVolumePosition();
     }
   }
 };
@@ -284,4 +375,3 @@ export default {
   width: 100%;
 }
 </style>
-

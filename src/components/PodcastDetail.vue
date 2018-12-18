@@ -268,8 +268,8 @@ export default {
           return snapshot.exists();
         })
         .catch(error => {
-          return false;
           console.log(error);
+          return false;
         });
     }
   },
