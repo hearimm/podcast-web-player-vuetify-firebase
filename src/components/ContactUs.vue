@@ -3,7 +3,7 @@
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-list-tile slot="activator" @click="() =>{}">
         <v-list-tile-action>
-          <v-icon>contact_mail</v-icon>
+          <v-icon>feedback</v-icon>
         </v-list-tile-action>
         <v-list-tile-content>
           <v-list-tile-title>Contact Us</v-list-tile-title>
