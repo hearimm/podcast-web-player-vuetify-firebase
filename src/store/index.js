@@ -116,7 +116,7 @@ export default new Vuex.Store({
     },
     loadDetailData({ commit }, payload) {
       // commit("setDetailData", podcastDetailData.data);
-      commit("setLoading", true);
+      // commit("setLoading", true);
       firebase
         .database()
         .ref("podcasts/collectionId/")
@@ -124,12 +124,12 @@ export default new Vuex.Store({
         .once("value")
         .then(snapshot => {
           commit("setDetailData", snapshot.val());
-          commit("setLoading", false);
+          // commit("setLoading", false);
         })
         .catch(error => {
           console.log(error);
           commit("setDetailData", null);
-          commit("setLoading", false);
+          // commit("setLoading", false);
         });
     },
     setPlayList({ commit }, payload) {

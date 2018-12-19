@@ -42,14 +42,14 @@
               <v-container>
                 <v-layout justify-space-around>
                   <v-btn @click="audioReplay(10)" icon large>
-                    <v-icon>replay_10</v-icon>
+                    <v-icon large>replay_10</v-icon>
                   </v-btn>
                   <v-btn @click.stop="playing ? pause() : play()" icon large>
-                    <v-icon v-if="!playing || paused" large>play_arrow</v-icon>
-                    <v-icon v-else large>pause</v-icon>
+                    <v-icon v-if="!playing || paused" x-large>play_arrow</v-icon>
+                    <v-icon v-else x-large>pause</v-icon>
                   </v-btn>
                   <v-btn @click="audioForward(30)" icon large>
-                    <v-icon>forward_30</v-icon>
+                    <v-icon large>forward_30</v-icon>
                   </v-btn>
                 </v-layout>
               </v-container>
@@ -72,10 +72,10 @@
                 <v-btn @click="audioReplay(10)" icon large>
                   <h3>1x</h3>
                 </v-btn>
-                <v-btn @click="audioForward(30)" icon large>
+                <v-btn @click="()=>{}" icon large>
                   <v-icon>more_horiz</v-icon>
                 </v-btn>
-                <v-btn @click="audioForward(30)" icon large>
+                <v-btn @click="()=>{}" icon large>
                   <v-icon>more_horiz</v-icon>
                 </v-btn>
               </v-layout>
@@ -141,10 +141,8 @@
   </v-container>
 </template>
 <script>
+import { bus, formatTime } from "../main";
 import draggable from "vuedraggable";
-
-const formatTime = second =>
-  new Date(second * 1000).toISOString().substr(11, 8);
 
 export default {
   components: {
@@ -338,29 +336,25 @@ export default {
       this.$store.dispatch("clearPlayList");
     },
     playItem(payload) {
-      console.log(payload.index);
       this.$store.dispatch("playItem", payload);
     },
     play() {
-      console.log("play.play()");
-
-      this.$root.$children[0].play();
+      bus.$emit("play");
     },
     pause() {
-      console.log("play.pause()");
-      this.$root.$children[0].pause();
+      bus.$emit("pause");
     },
     audioReplay(val) {
-      this.$root.$children[0].audioReplay(val);
+      bus.$emit("audioReplay", val);
     },
     audioForward(val) {
-      this.$root.$children[0].audioForward(val);
+      bus.$emit("audioForward", val);
     },
     setPosition() {
-      this.$root.$children[0].setPosition();
+      bus.$emit("setPosition");
     },
     setVolumePosition() {
-      this.$root.$children[0].setVolumePosition();
+      bus.$emit("setVolumePosition");
     }
   }
 };

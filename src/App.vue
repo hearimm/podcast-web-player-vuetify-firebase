@@ -73,56 +73,61 @@
     </v-content>
 
     <v-footer app height="49" id="footer">
-      <v-container row wrap pa-0>
-        <v-layout fill-height>
-          <audio
-            :loop="repeat === 'repeat_one'"
-            :src="nowPlaying.src"
-            controls
-            hidden
-            id="player"
-            ref="player"
-          ></audio>
-          <v-btn @click.stop="skipPrevious" icon>
-            <v-icon>skip_previous</v-icon>
-          </v-btn>
-          <v-btn @click="audioReplay(10)" icon>
-            <v-icon>replay_10</v-icon>
-          </v-btn>
-          <v-btn @click.stop="playing ? pause() : play()" icon>
-            <v-icon v-if="!playing || paused">play_arrow</v-icon>
-            <v-icon v-else>pause</v-icon>
-          </v-btn>
-          <v-btn @click="audioForward(30)" icon>
-            <v-icon>forward_30</v-icon>
-          </v-btn>
-          <v-btn @click.stop="skipNext" icon>
-            <v-icon>skip_next</v-icon>
-          </v-btn>
-          <v-btn @click.stop="shuffle" icon>
-            <v-icon>shuffle</v-icon>
-          </v-btn>
-          <v-btn @click.stop="playerRepeat" icon>
-            <v-icon v-if="repeat === ''">repeat</v-icon>
-            <v-icon color="primary" v-else>{{repeat}}</v-icon>
-          </v-btn>
-          <v-btn :disabled="true" icon>{{currentTime}}</v-btn>
-          <v-flex align-self-center xs12 sm3 row>
-            <v-slider
-              :disabled="!loaded"
-              @click.native="setPosition()"
-              class="ml-2 mr-2"
-              style="height: 49px"
-              v-model="percentage"
-              validate-on-blur
-            ></v-slider>
+      <v-container row py-0 align-center justify-center fill-height>
+        <v-layout align-center justify-center fill-height style="max-width:1240px;">
+          <v-flex hidden-sm-and-down md12>
+            <v-layout align-center justify-center fill-height>
+              <audio
+                :loop="repeat === 'repeat_one'"
+                :src="nowPlaying.src"
+                :title="nowPlaying.title"
+                controls
+                hidden
+                id="player"
+                ref="player"
+              ></audio>
+              <v-btn @click.stop="skipPrevious" icon>
+                <v-icon>skip_previous</v-icon>
+              </v-btn>
+              <v-btn @click="audioReplay(10)" icon>
+                <v-icon>replay_10</v-icon>
+              </v-btn>
+              <v-btn @click.stop="playing ? pause() : play()" icon>
+                <v-icon v-if="!playing || paused">play_arrow</v-icon>
+                <v-icon v-else>pause</v-icon>
+              </v-btn>
+              <v-btn @click="audioForward(30)" icon>
+                <v-icon>forward_30</v-icon>
+              </v-btn>
+              <v-btn @click.stop="skipNext" icon>
+                <v-icon>skip_next</v-icon>
+              </v-btn>
+              <v-btn @click.stop="shuffle" icon>
+                <v-icon>shuffle</v-icon>
+              </v-btn>
+              <v-btn @click.stop="playerRepeat" icon>
+                <v-icon v-if="repeat === ''">repeat</v-icon>
+                <v-icon color="primary" v-else>{{repeat}}</v-icon>
+              </v-btn>
+              <v-btn :disabled="true" icon>{{currentTime}}</v-btn>
+              <v-flex align-self-center xs12 sm3 md3 row>
+                <v-slider
+                  :disabled="!loaded"
+                  @click.native="setPosition()"
+                  class="ml-2 mr-2"
+                  style="height: 49px"
+                  v-model="percentage"
+                  validate-on-blur
+                ></v-slider>
+              </v-flex>
+              <v-btn :disabled="true" icon>{{duration}}</v-btn>
+              <v-btn :disabled="!loaded" @click.native="mute()" icon>
+                <v-icon v-if="!isMuted">volume_up</v-icon>
+                <v-icon v-else>volume_off</v-icon>
+              </v-btn>
+            </v-layout>
           </v-flex>
-          <v-btn :disabled="true" icon>{{duration}}</v-btn>
-          <v-btn :disabled="!loaded" @click.native="mute()" icon>
-            <v-icon v-if="!isMuted">volume_up</v-icon>
-            <v-icon v-else>volume_off</v-icon>
-          </v-btn>
-          <v-flex xs12 sm6>
+          <v-flex xs12 sm12 md5>
             <v-card height="49" id="playerCard">
               <v-layout row fill-height>
                 <v-flex align-self-center xs-1 sm-1 md-1>
@@ -133,8 +138,8 @@
                     contain
                   ></v-img>
                 </v-flex>
-                <v-flex xs-2 sm-2 md-2>
-                  <v-card-title class="pa-0">
+                <v-flex xs11 sm11 md8>
+                  <v-card-title class="pa-0" @click="goToPlayVue">
                     <v-flex fill-height>
                       <p class="grey--text mb-1" style="font-size: 11px; height: 17px">배성재의 텐</p>
                       <p
@@ -144,31 +149,18 @@
                     </v-flex>
                   </v-card-title>
                 </v-flex>
-                <v-spacer></v-spacer>
                 <!--queue-->
-                <v-flex align-self-center id="flex" md-1 sm-1 xs-1>
-                  <v-btn :class="menu ? 'primary':''" @click="menu = !menu" icon id="anchor">
-                    <v-icon>queue_music</v-icon>
-                  </v-btn>
-
-                  <v-menu
-                    :position-x="100"
-                    :position-y="-660"
-                    attach="#playerCard"
-                    :close-on-click="false"
-                    :close-on-content-click="false"
-                    transition="slide-y-reverse-transition"
-                    v-model="menu"
-                  >
+                <v-flex align-self-center id="flex" md2 hidden-sm-and-down>
+                  <v-menu v-model="menu" top offset-y :close-on-content-click="false">
+                    <v-btn slot="activator" @click="menu = !menu" icon id="anchor">
+                      <v-icon>queue_music</v-icon>
+                    </v-btn>
                     <v-card height="660px" width="480px">
                       <v-layout fluid>
                         <v-toolbar>
                           <v-toolbar-title>Next up</v-toolbar-title>
                           <v-spacer></v-spacer>
                           <v-btn @click="clearPlayList">clear</v-btn>
-                          <v-btn @click="menu = false" flat icon>
-                            <v-icon>close</v-icon>
-                          </v-btn>
                         </v-toolbar>
                       </v-layout>
                       <v-container class="scroll-y" id="scroll-target" pa-0>
@@ -232,6 +224,7 @@
 </template>
 
 <script>
+import { bus } from "./main";
 import draggable from "vuedraggable";
 import ContactUs from "./components/ContactUs.vue";
 
@@ -259,6 +252,14 @@ export default {
   computed: {
     isUserAuthenticated() {
       return this.$store.getters["user/isUserAuthenticated"];
+    },
+    loading: {
+      get() {
+        return this.$store.getters.loading;
+      },
+      set(value) {
+        this.$store.dispatch("setLoading", value);
+      }
     },
     queueItems: {
       get() {
@@ -364,6 +365,7 @@ export default {
       this.$store.dispatch("user/signOut");
     },
     submitSearch() {
+      this.loading = true;
       this.axios
         .get(
           `https://express-test-hyuk.herokuapp.com/api/itunesSearch?search=${
@@ -371,12 +373,18 @@ export default {
           }`
         )
         .then(response => {
+          this.loading = false;
           this.$store.dispatch("setPodcast", response.data.results);
           this.$router.push("/searchResult");
         })
         .catch(error => {
+          this.loading = false;
           console.log(error);
         });
+    },
+
+    goToPlayVue() {
+      this.$router.push("/play");
     },
     playListRemoveIndex(index) {
       this.$store.dispatch("playListRemoveIndex", index);
@@ -425,10 +433,16 @@ export default {
       console.log("play");
       if (this.playing) return;
       this.paused = false;
-      this.audio.play().then(() => (this.playing = true));
+      this.audio
+        .play()
+        .then(() => (this.playing = true))
+        .catch(error => {
+          console.log(error);
+        });
     },
     pause() {
       this.paused = !this.paused;
+      this.playing = false;
       this.paused ? this.audio.pause() : this.audio.play();
     },
     download() {
@@ -509,9 +523,35 @@ export default {
       this.audio.addEventListener("ended", this._handleEnded);
     }
   },
+  created() {},
   mounted() {
     this.audio = this.$refs.player;
     this.init();
+
+    bus.$on("play", () => {
+      console.log("bus play");
+      this.play();
+    });
+    bus.$on("pause", () => {
+      console.log("bus pause");
+      this.pause();
+    });
+    bus.$on("audioReplay", val => {
+      console.log("bus audioReplay");
+      this.audioReplay(val);
+    });
+    bus.$on("audioForward", val => {
+      console.log("bus audioForward");
+      this.audioForward(val);
+    });
+    bus.$on("setPosition", () => {
+      console.log("bus setPosition");
+      this.setPosition();
+    });
+    bus.$on("setVolumePosition", () => {
+      console.log("bus setVolumePosition");
+      this.setVolumePosition();
+    });
   },
   beforeDestroy() {
     this.audio.removeEventListener("timeupdate", this._handlePlayingUI);

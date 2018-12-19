@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-layout row wrap v-if="loading">
+    <v-layout row wrap v-if="loading && !lookupData">
       <v-flex xs12 class="text-xs-center">
         <v-progress-circular indeterminate color="primary" :width="7" :size="70" v-if="loading"></v-progress-circular>
       </v-flex>
@@ -131,7 +131,7 @@ export default {
       selected: [],
       headers: [
         {
-          text: "Title",
+          text: "제목",
           align: "left",
           sortable: false,
           value: "name"
@@ -139,7 +139,7 @@ export default {
         {
           text: "날짜",
           align: "center",
-          value: "날짜"
+          value: "published"
         },
         { text: "", sortable: false, value: "" }
       ],
@@ -158,8 +158,13 @@ export default {
         return 0;
       return Math.ceil(this.episodes.length / this.pagination.rowsPerPage);
     },
-    loading() {
-      return this.$store.getters.loading;
+    loading: {
+      get() {
+        return this.$store.getters.loading;
+      },
+      set(value) {
+        this.$store.dispatch("setLoading", value);
+      }
     },
     podcast() {
       console.log(this.$store.getters.podcasts);
@@ -274,7 +279,8 @@ export default {
     }
   },
   mounted: function() {
-    this.axios
+    this.loading = true;
+    const p1 = this.axios
       .get(
         `https://express-test-hyuk.herokuapp.com/api/itunesLookup?id=${this.id}`
       )
@@ -286,7 +292,7 @@ export default {
         console.log(error);
       });
 
-    firebase
+    const p2 = firebase
       .database()
       .ref("rssRequest/collectionId/")
       .once("value")
@@ -297,7 +303,7 @@ export default {
         console.log(error);
       });
 
-    firebase
+    const p3 = firebase
       .database()
       .ref("chips/collectionId/")
       .child(this.id)
@@ -313,6 +319,15 @@ export default {
         console.log(error);
       });
     this.$store.dispatch("loadDetailData", { id: this.id });
+
+    Promise.all([p1, p2, p3])
+      .then(() => {
+        this.loading = false;
+      })
+      .catch(error => {
+        console.log(error);
+        this.loading = false;
+      });
   }
 };
 </script>
