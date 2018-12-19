@@ -234,10 +234,11 @@
 <script>
 import draggable from "vuedraggable";
 import ContactUs from "./components/ContactUs.vue";
-// import Sortable from "sortablejs";
 
+// cpu 너무 먹는듯 수정 필요
 const formatTime = second =>
   new Date(second * 1000).toISOString().substr(11, 8);
+
 export default {
   name: "App",
   components: {
@@ -250,17 +251,9 @@ export default {
       menu: false,
       contactUsDialog: false,
       search: "",
-      autoPlay: true,
-      firstPlay: true,
-      isMuted: false,
-      loaded: false,
-      playing: false,
-      paused: false,
-      percentage: 0,
-      currentTime: "00:00:00",
       audio: undefined,
-      totalDuration: 0
-      // queueItems: [],
+      percentage: 0,
+      currentTime: "00:00:00"
     };
   },
   computed: {
@@ -288,6 +281,77 @@ export default {
     },
     repeat() {
       return this.$store.getters.repeat;
+    },
+    autoPlay() {
+      return this.$store.getters["player/autoPlay"];
+    },
+    firstPlay: {
+      get() {
+        return this.$store.getters["player/firstPlay"];
+      },
+      set(value) {
+        this.$store.dispatch("player/firstPlay", value);
+      }
+    },
+    isMuted() {
+      return this.$store.getters["player/isMuted"];
+    },
+    loaded: {
+      get() {
+        return this.$store.getters["player/loaded"];
+      },
+      set(value) {
+        this.$store.dispatch("player/loaded", value);
+      }
+    },
+    playing: {
+      get() {
+        return this.$store.getters["player/playing"];
+      },
+      set(value) {
+        this.$store.dispatch("player/playing", value);
+      }
+    },
+    paused: {
+      get() {
+        return this.$store.getters["player/paused"];
+      },
+      set(value) {
+        this.$store.dispatch("player/paused", value);
+      }
+    },
+    // percentage: {
+    //   get() {
+    //     return this.$store.getters["player/percentage"];
+    //   },
+    //   set(value) {
+    //     this.$store.dispatch("player/percentage", value);
+    //   }
+    // },
+    volumePercentage: {
+      get() {
+        return this.$store.getters["player/volumePercentage"];
+      },
+      set(value) {
+        this.$store.dispatch("player/volumePercentage", value);
+      }
+    },
+    // currentTime: {
+    //   get() {
+    //     return this.$store.getters["player/currentTime"];
+    //   },
+    //   set(value) {
+    //     this.$store.dispatch("player/currentTime", value);
+    //   }
+    // },
+    totalDuration: {
+      get() {
+        return this.$store.getters["player/totalDuration"];
+      },
+      set(value) {
+        this.setVolumePosition();
+        this.$store.dispatch("player/totalDuration", value);
+      }
     }
   },
   watch: {
@@ -358,6 +422,7 @@ export default {
       this.audio.currentTime = 0;
     },
     play() {
+      console.log("play");
       if (this.playing) return;
       this.paused = false;
       this.audio.play().then(() => (this.playing = true));
@@ -369,6 +434,11 @@ export default {
     download() {
       this.audio.pause();
       window.open(this.file, "download");
+    },
+    setVolumePosition() {
+      console.log(this.volumePercentage);
+      this.audio.volume =
+        this.volumePercentage === 0 ? 0 : this.volumePercentage / 100;
     },
     mute() {
       this.isMuted = !this.isMuted;
@@ -398,6 +468,9 @@ export default {
       } else {
         throw new Error("Failed to load sound file");
       }
+    },
+    _handleVolumechange: function() {
+      this.volumePercentage = this.audio.volume * 100;
     },
     _handlePlayingUI: function() {
       this.percentage = (this.audio.currentTime / this.audio.duration) * 100;
@@ -429,6 +502,8 @@ export default {
     init: function() {
       this.audio.addEventListener("timeupdate", this._handlePlayingUI);
       this.audio.addEventListener("loadeddata", this._handleLoaded);
+      this.audio.addEventListener("volumechange", this._handleVolumechange);
+
       this.audio.addEventListener("pause", this._handlePlayPause);
       this.audio.addEventListener("play", this._handlePlayPause);
       this.audio.addEventListener("ended", this._handleEnded);
@@ -441,6 +516,8 @@ export default {
   beforeDestroy() {
     this.audio.removeEventListener("timeupdate", this._handlePlayingUI);
     this.audio.removeEventListener("loadeddata", this._handleLoaded);
+    // 필요 없는 이벤트 리스너인듯
+    this.audio.removeEventListener("volumechange", this._handleVolumechange);
     this.audio.removeEventListener("pause", this._handlePlayPause);
     this.audio.removeEventListener("play", this._handlePlayPause);
     this.audio.removeEventListener("ended", this._handleEnded);

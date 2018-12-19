@@ -32,6 +32,14 @@
 
 1. 참고할만한 사이트 보고 개발자 소개 페이지만들자
 
+### Play VUE
+
+1. \$root.child 에서 event bus로 변경
+
+### App VUE
+
+1. footer xs 디자인 변경
+
 ## Project setup
 
 ```npm
