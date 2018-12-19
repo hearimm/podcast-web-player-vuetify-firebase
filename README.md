@@ -11,18 +11,17 @@
 ### 추가 vue
 
 1. ~~문의/요청 페이지 추가~~
-1. 문의/요청 요청 시, mail 보내기 doksul23+podcast_webmaster@gmail.com
-   https://nesoy.github.io/articles/2017-05/Nodejs-email
+1. ~~문의/요청 요청 시, mail 보내기 doksul23+podcast_webmaster@gmail.com~~
 
 ### DETAIL VUE
 
 1. ~~제목찾기 추천 기능 firebase 다시 한번 불러오게?~~
-1. ~~내용 없을때 팟캐스트 RSS 요청 기능~~
-1. ~~이미 RSS 요청됬을때 처리 추가~~
-1. ~~팟빵 RSS 주소일때 alert 추가~~
-1. ~~조회된 데이터 없습니다 먼저 뜨는 이슈 수정~~
-1. vuex 에서 detailData 빼기
-1. 날짜 sorting 안됨.
+2. ~~내용 없을때 팟캐스트 RSS 요청 기능~~
+3. ~~이미 RSS 요청됬을때 처리 추가~~
+4. ~~팟빵 RSS 주소일때 alert 추가~~
+5. ~~조회된 데이터 없습니다 먼저 뜨는 이슈 수정~~
+6. vuex 에서 detailData 빼기
+7. 날짜 sorting 안됨.
 
 ### 회원기능
 
@@ -43,7 +42,7 @@
 ### App VUE
 
 1. ~~footer xs 디자인 변경~~
-1. 재생목록 변경 https://github.com/vuejs/awesome-vue#infinite-scroll
+1. 재생목록 변경 <https://github.com/vuejs/awesome-vue#infinite-scroll>
 
 ## Project setup
 

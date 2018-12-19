@@ -17,13 +17,13 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs12>
-                <v-text-field label="name*" required></v-text-field>
+                <v-text-field v-model="name" :rules="nameRules" label="name*" required></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="Email*" required></v-text-field>
+                <v-text-field v-model="email" :rules="emailRules" label="Email*" required></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-textarea solo name="input-7-4" label="이 부분 좀 고쳐주세요." value></v-textarea>
+                <v-textarea v-model="message" solo name="input-7-4" label="이 부분 좀 고쳐주세요." value></v-textarea>
               </v-flex>
             </v-layout>
           </v-container>
@@ -32,7 +32,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click="dialog = false">Close</v-btn>
-          <v-btn color="blue darken-1" flat @click="dialog = false">Save</v-btn>
+          <v-btn color="blue darken-1" flat @click="sendEmail">Send</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -41,8 +41,38 @@
 <script>
 export default {
   name: "contactUs",
-  data() {
-    return { dialog: false };
+  data: () => ({
+    dialog: false,
+    valid: false,
+    name: "",
+    nameRules: [
+      v => !!v || "Name is required",
+      v => v.length <= 10 || "Name must be less than 10 characters"
+    ],
+    email: "",
+    emailRules: [
+      v => !!v || "E-mail is required",
+      v => /.+@.+/.test(v) || "E-mail must be valid"
+    ],
+    message: ""
+  }),
+  methods: {
+    sendEmail() {
+      var apiUrl = "https://express-test-hyuk.herokuapp.com/api/contact";
+      this.axios
+        .post(apiUrl, {
+          name: this.name,
+          email: this.email,
+          message: this.message
+        })
+        .then(response => {
+          console.log(response);
+          this.dialog = false;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
   }
 };
 </script>
