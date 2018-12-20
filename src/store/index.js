@@ -1,4 +1,3 @@
-import * as firebase from "firebase";
 import Vue from "vue";
 import Vuex from "vuex";
 // import podcastData from "../test/resources/podcasts";
@@ -11,9 +10,9 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     loading: false,
+    playbackRateList: [1, 1.2, 1.5, 2],
+    playbackRateIdx: 0,
     podcasts: [],
-    detailData: null,
-    lookupData: null,
     queueItems: [],
     repeat: "",
     nowPlaying: {
@@ -23,14 +22,18 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    setDetailData(state, payload) {
-      state.detailData = payload;
-    },
     setLoading(state, payload) {
       state.loading = payload;
     },
     setError(state, payload) {
       state.error = payload;
+    },
+    incrementPlaybackRateIdx(state) {
+      if (state.playbackRateIdx < state.playbackRateList.length - 1) {
+        state.playbackRateIdx += 1;
+      } else {
+        state.playbackRateIdx = 0;
+      }
     },
     clearError(state) {
       state.error = null;
@@ -145,26 +148,11 @@ export default new Vuex.Store({
     setLoading({ commit }, payload) {
       commit("setLoading", payload);
     },
+    incrementPlaybackRateIdx({ commit }) {
+      commit("incrementPlaybackRateIdx");
+    },
     setPodcast({ commit }, payload) {
       commit("setPodcast", payload);
-    },
-    loadDetailData({ commit }, payload) {
-      // commit("setDetailData", podcastDetailData.data);
-      // commit("setLoading", true);
-      firebase
-        .database()
-        .ref("podcasts/collectionId/")
-        .child(payload.id)
-        .once("value")
-        .then(snapshot => {
-          commit("setDetailData", snapshot.val());
-          // commit("setLoading", false);
-        })
-        .catch(error => {
-          console.log(error);
-          commit("setDetailData", null);
-          // commit("setLoading", false);
-        });
     },
     setPlayList({ commit }, payload) {
       commit("setPlayList", payload);
@@ -239,14 +227,17 @@ export default new Vuex.Store({
     error(state) {
       return state.error;
     },
+    playbackRateList(state) {
+      return state.playbackRateList;
+    },
+    playbackRateIdx(state) {
+      return state.playbackRateIdx;
+    },
+    playbackRateValue(state) {
+      return state.playbackRateList[state.playbackRateIdx];
+    },
     podcasts(state) {
       return state.podcasts;
-    },
-    lookupData(state) {
-      return state.lookupData;
-    },
-    detailData(state) {
-      return state.detailData;
     },
     queueItems(state) {
       return state.queueItems;

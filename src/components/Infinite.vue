@@ -13,6 +13,11 @@
         <v-icon>delete</v-icon>
       </v-btn>
     </v-toolbar>
+    <v-alert v-if="queueItems.length <= 0" :value="true" type="warning" class="py-1">
+      <v-avatar class="mr-3">
+        <img :src="noneQueueAvatar" alt="avatar">
+      </v-avatar>재생목록 없쪄염
+    </v-alert>
     <draggable :options="{handle:'.my-handle'}" id="123" v-model="queueItems">
       <v-list
         :key="item.enclosure.url + '_' + index"
@@ -78,6 +83,7 @@
 <script>
 // import queueData from "../test/resources/queueItems.js";
 import draggable from "vuedraggable";
+import noneQueueAvatar from "../assets/avatar_60_rotate.jpg";
 
 export default {
   name: "infinite",
@@ -86,6 +92,7 @@ export default {
   },
   data() {
     return {
+      noneQueueAvatar: noneQueueAvatar,
       startIdx: 0,
       maxIdx: 15
     };

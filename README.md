@@ -20,7 +20,8 @@
 
 ### Play VUE
 
-1. nowPlaying 없을때 화면 구성
+1. ~~nowPlaying 없을때 화면 구성~~
+2. ~~play 속도 조절 기능~~
 
 ### App VUE
 

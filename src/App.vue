@@ -140,7 +140,7 @@
                   ></v-img>
                 </v-flex>
                 <v-flex xs11 sm11 md8>
-                  <v-card-title class="pa-0" @click="goToPlayVue">
+                  <v-card-title class="pa-0" style="cursor:pointer" @click="routeToPlayVue">
                     <v-flex fill-height>
                       <p class="grey--text mb-1" style="font-size: 11px; height: 17px">배성재의 텐</p>
                       <p
@@ -321,8 +321,7 @@ export default {
           console.log(error);
         });
     },
-
-    goToPlayVue() {
+    routeToPlayVue() {
       this.$router.push("/play");
     },
     skipNext() {
@@ -342,6 +341,10 @@ export default {
     },
     skipPrevious() {
       this.$store.dispatch("skipPrevious");
+    },
+    toggleAudioPlaybackRate() {
+      this.$store.dispatch("incrementPlaybackRateIdx");
+      this.audio.playbackRate = this.$store.getters["playbackRateValue"];
     },
     audioReplay(val) {
       this.audio.currentTime -= val;
@@ -387,7 +390,7 @@ export default {
     mute() {
       this.isMuted = !this.isMuted;
       this.audio.muted = this.isMuted;
-      this.volumeValue = this.isMuted ? 0 : 75;
+      this.volumeValue = this.isMuted ? 0 : 100;
     },
     reload() {
       this.audio.load();
@@ -412,9 +415,6 @@ export default {
       } else {
         throw new Error("Failed to load sound file");
       }
-    },
-    _handleVolumechange: function() {
-      this.volumePercentage = this.audio.volume * 100;
     },
     _handlePlayingUI: function() {
       this.percentage = (this.audio.currentTime / this.audio.duration) * 100;
@@ -446,8 +446,6 @@ export default {
     init: function() {
       this.audio.addEventListener("timeupdate", this._handlePlayingUI);
       this.audio.addEventListener("loadeddata", this._handleLoaded);
-      this.audio.addEventListener("volumechange", this._handleVolumechange);
-
       this.audio.addEventListener("pause", this._handlePlayPause);
       this.audio.addEventListener("play", this._handlePlayPause);
       this.audio.addEventListener("ended", this._handleEnded);
@@ -459,35 +457,30 @@ export default {
     this.init();
 
     bus.$on("play", () => {
-      console.log("bus play");
       this.play();
     });
     bus.$on("pause", () => {
-      console.log("bus pause");
       this.pause();
     });
+    bus.$on("toggleAudioPlaybackRate", () => {
+      this.toggleAudioPlaybackRate();
+    });
     bus.$on("audioReplay", val => {
-      console.log("bus audioReplay");
       this.audioReplay(val);
     });
     bus.$on("audioForward", val => {
-      console.log("bus audioForward");
       this.audioForward(val);
     });
     bus.$on("setPosition", () => {
-      console.log("bus setPosition");
       this.setPosition();
     });
     bus.$on("setVolumePosition", () => {
-      console.log("bus setVolumePosition");
       this.setVolumePosition();
     });
   },
   beforeDestroy() {
     this.audio.removeEventListener("timeupdate", this._handlePlayingUI);
     this.audio.removeEventListener("loadeddata", this._handleLoaded);
-    // 필요 없는 이벤트 리스너인듯
-    this.audio.removeEventListener("volumechange", this._handleVolumechange);
     this.audio.removeEventListener("pause", this._handlePlayPause);
     this.audio.removeEventListener("play", this._handlePlayPause);
     this.audio.removeEventListener("ended", this._handleEnded);

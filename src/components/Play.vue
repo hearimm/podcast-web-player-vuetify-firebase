@@ -2,8 +2,17 @@
   <v-container>
     <v-layout row wrap>
       <v-flex xs12 sm6 mb-2 offset-sm3>
-        <v-card>
-          <v-img :src="nowPlaying.item.artworkUrl600" contain height="300px" @click="routeToDetail"></v-img>
+        <v-card v-if="nowPlaying.src.length <= 0">
+          <v-img :src="noneQueueImg" height="300px"></v-img>
+        </v-card>
+        <v-card v-else>
+          <v-img
+            style="cursor: pointer"
+            :src="nowPlaying.item.artworkUrl600"
+            contain
+            height="300px"
+            @click="routeToDetail"
+          ></v-img>
           <v-card-actions>
             <v-container grid-list-xs text-xs-center pa-1>
               <v-layout>
@@ -12,7 +21,7 @@
                     :disabled="!loaded"
                     @click.native="setPosition()"
                     class="ml-2 mr-2"
-                    style="height: 25px"
+                    style="height: 25px; cursor: pointer"
                     v-model="percentage"
                     validate-on-blur
                   ></v-slider>
@@ -28,7 +37,7 @@
                 </v-flex>
               </v-layout>
 
-              <v-container @click="routeToDetail">
+              <v-container @click="routeToDetail" style="cursor: pointer">
                 <v-layout>
                   <div class="title">
                     <marquee>{{nowPlaying.item.title}}</marquee>
@@ -61,7 +70,7 @@
                     :disabled="!loaded"
                     @click.native="setVolumePosition()"
                     class="ml-2 mr-2"
-                    style="height: 49px"
+                    style="height: 49px; cursor: pointer"
                     v-model="volumePercentage"
                     prepend-icon="volume_mute"
                     append-icon="volume_up"
@@ -71,8 +80,8 @@
               </v-layout>
 
               <v-layout justify-space-around>
-                <v-btn @click="audioReplay(10)" icon large>
-                  <h3>1x</h3>
+                <v-btn @click="toggleAudioPlaybackRate" icon large>
+                  <h3>{{playbackRateValue}}x</h3>
                 </v-btn>
                 <v-btn @click="()=>{}" icon large>
                   <v-icon>more_horiz</v-icon>
@@ -99,6 +108,7 @@
 <script>
 import { bus, formatTime } from "../main";
 import Infinite from "./Infinite.vue";
+import noneQueueImg from "../assets/none_queue_img.jpg";
 
 export default {
   components: {
@@ -106,12 +116,7 @@ export default {
   },
   data() {
     return {
-      img: "http://img2.sbs.co.kr/sbs_img/2016/03/25/1400x1400_ten.png",
-      collectionName: "배가놈",
-      collectionCensoredName: "배가배가",
-      playTitleName:
-        "(화) 배성재의 텐 - 비연애 참피언스리그 (박문성 스포츠해설가)",
-      published: new Date("2016-03-29T13:00:00.000Z").toISOString()
+      noneQueueImg: noneQueueImg
     };
   },
   computed: {
@@ -202,6 +207,9 @@ export default {
         this.setVolumePosition();
         this.$store.dispatch("player/volumePercentage", value);
       }
+    },
+    playbackRateValue() {
+      return this.$store.getters["playbackRateValue"];
     }
   },
   watch: {
@@ -218,6 +226,9 @@ export default {
     },
     audioReplay(val) {
       bus.$emit("audioReplay", val);
+    },
+    toggleAudioPlaybackRate() {
+      bus.$emit("toggleAudioPlaybackRate");
     },
     audioForward(val) {
       bus.$emit("audioForward", val);
