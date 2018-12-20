@@ -23,6 +23,11 @@
     <v-layout row wrap v-if="!loading">
       <v-flex offset-sm3 sm6 xs12>
         <h1>구독</h1>
+        <v-alert
+          v-if="!isUserAuthenticated"
+          :value="true"
+          type="warning"
+        >로그인을 하지 않는다면... 배가 놈 밖에 없을 것이야</v-alert>
       </v-flex>
     </v-layout>
     <v-layout v-if="subscribes" wrap>
@@ -50,29 +55,10 @@
 
 <script>
 export default {
-  data: () => ({
-    mainImages: [
-      {
-        id: "1",
-        url:
-          "https://scontent-icn1-1.cdninstagram.com/vp/0fa0368093f958a05f63d2bb72b2fb2f/5C98B709/t51.2885-15/e35/46891549_272363153445146_7627318773272466048_n.jpg?_nc_ht=scontent-icn1-1.cdninstagram.com",
-        title: "1"
-      },
-      {
-        id: "2",
-        url:
-          "https://scontent-icn1-1.cdninstagram.com/vp/898261193ade631252b5eab9adedc723/5C902E06/t51.2885-15/e35/46687793_320924465174665_4367334844889395566_n.jpg?_nc_ht=scontent-icn1-1.cdninstagram.com",
-        title: "2"
-      },
-      {
-        id: "3",
-        url:
-          "https://scontent-icn1-1.cdninstagram.com/vp/9f800a8dae06dfe9efbea144077d0191/5C9591E6/t51.2885-15/e35/45426934_2622627491081034_7573423875318903053_n.jpg?_nc_ht=scontent-icn1-1.cdninstagram.com",
-        title: "3"
-      }
-    ]
-  }),
   computed: {
+    isUserAuthenticated() {
+      return this.$store.getters["user/isUserAuthenticated"];
+    },
     loading() {
       return this.$store.getters.loading;
     },

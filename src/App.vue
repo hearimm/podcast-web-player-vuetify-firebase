@@ -228,8 +228,13 @@ export default {
         this.$store.dispatch("player/firstPlay", value);
       }
     },
-    isMuted() {
-      return this.$store.getters["player/isMuted"];
+    isMuted: {
+      get() {
+        return this.$store.getters["player/isMuted"];
+      },
+      set(value) {
+        this.$store.dispatch("player/isMuted", value);
+      }
     },
     loaded: {
       get() {

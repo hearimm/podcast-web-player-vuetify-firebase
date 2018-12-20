@@ -24,6 +24,8 @@ new Vue({
         this.$store.dispatch("user/setUser", firebase.auth().currentUser);
         this.$store.dispatch("user/fetchUserData");
       } else {
+        this.$store.dispatch("user/fetchUnLoginUserData");
+
         // this.$router.push('/auth')
       }
     });
