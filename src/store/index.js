@@ -38,9 +38,6 @@ export default new Vuex.Store({
     setPodcast(state, payload) {
       state.podcasts = payload;
     },
-    setLookupData(state, payload) {
-      state.lookupData = payload;
-    },
     setPlayList(state, payload) {
       state.queueItems = payload;
       state.nowPlaying.index = state.queueItems.findIndex(x => {
@@ -55,6 +52,46 @@ export default new Vuex.Store({
     },
     playListRemoveIndex(state, payload) {
       state.queueItems.splice(payload, 1);
+    },
+
+    orderByPublishedDesc(state) {
+      // state.queueItems = [state.queueItems[state.nowPlaying.index]];
+      let queue = state.queueItems;
+      const index = state.nowPlaying.index;
+      const length = queue.length;
+      let nonTarget = queue.slice(0, index + 1);
+      let items = queue.slice(index + 1, length);
+      items.sort(function(a, b) {
+        if (a.published < b.published) {
+          return 1;
+        }
+        if (a.published > b.published) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+      });
+      state.queueItems = nonTarget.concat(items);
+    },
+
+    orderByPublishedAsc(state) {
+      // state.queueItems = [state.queueItems[state.nowPlaying.index]];
+      let queue = state.queueItems;
+      const index = state.nowPlaying.index;
+      const length = queue.length;
+      let nonTarget = queue.slice(0, index + 1);
+      let items = queue.slice(index + 1, length);
+      items.sort(function(a, b) {
+        if (a.published > b.published) {
+          return 1;
+        }
+        if (a.published < b.published) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+      });
+      state.queueItems = nonTarget.concat(items);
     },
     clearPlayList(state) {
       state.queueItems = [state.queueItems[state.nowPlaying.index]];
@@ -108,9 +145,6 @@ export default new Vuex.Store({
     setLoading({ commit }, payload) {
       commit("setLoading", payload);
     },
-    setLookupData({ commit }, payload) {
-      commit("setLookupData", payload);
-    },
     setPodcast({ commit }, payload) {
       commit("setPodcast", payload);
     },
@@ -154,6 +188,14 @@ export default new Vuex.Store({
     },
     clearPlayList({ commit }) {
       commit("clearPlayList");
+      commit("findSetNowPlayingIndex");
+    },
+    orderByPublishedAsc({ commit }) {
+      commit("orderByPublishedAsc");
+      commit("findSetNowPlayingIndex");
+    },
+    orderByPublishedDesc({ commit }) {
+      commit("orderByPublishedDesc");
       commit("findSetNowPlayingIndex");
     },
     playItem({ commit }, payload) {

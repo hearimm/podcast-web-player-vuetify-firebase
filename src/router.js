@@ -6,12 +6,18 @@ import Auth from "./components/Auth.vue";
 import AuthSuccess from "./components/AuthSuccess.vue";
 import SearchResult from "./components/SearchResult.vue";
 import Play from "./components/Play.vue";
+import Infinite from "./components/Infinite.vue";
 
 Vue.use(Router);
 
 export default new Router({
   base: process.env.BASE_URL,
   routes: [
+    {
+      path: "/infinite",
+      name: "infinite",
+      component: Infinite
+    },
     {
       path: "/",
       name: "home",

@@ -125,9 +125,10 @@ export default {
       dialog: false,
       rssReqComplete: false,
       lookupData: null,
+      detailData: null,
       pagination: { sortBy: "published", descending: true },
       chips: [],
-      chipsItems: ["아재", "윤태진", "김소혜", "주시은"],
+      chipsItems: [],
       selected: [],
       headers: [
         {
@@ -166,23 +167,16 @@ export default {
         this.$store.dispatch("setLoading", value);
       }
     },
-    podcast() {
-      console.log(this.$store.getters.podcasts);
-      return this.$store.getters.podcasts.find(x => {
-        return x.collectionId == this.id;
-      });
-    },
-    detailData() {
-      return this.$store.getters.detailData;
-    },
     episodes() {
-      console.log(this.detailData);
+      if (this.lookupData === null || this.lookupData === undefined) {
+        return [];
+      }
       if (this.detailData === null || this.detailData === undefined) {
         return [];
       }
 
       if (this.chips.length > 0) {
-        return this.$store.getters.detailData.episodes.filter(x => {
+        return this.detailData.episodes.filter(x => {
           for (let key in this.chips) {
             if (x.title.indexOf(this.chips[key]) > 0) {
               return true;
@@ -191,15 +185,13 @@ export default {
           return false;
         });
       } else {
-        return this.$store.getters.detailData.episodes;
+        return this.detailData.episodes;
       }
     },
     subscribes() {
       return this.$store.getters["user/subscribes"];
     },
     isSubscribes() {
-      console.log("isSubscribes computed");
-
       for (var key in this.$store.getters["user/subscribes"]) {
         if (
           this.$store.getters["user/subscribes"][key].collectionId == this.id
@@ -286,7 +278,6 @@ export default {
       )
       .then(response => {
         this.lookupData = response.data.results[0];
-        this.$store.dispatch("setLookupData", response.data.results[0]);
       })
       .catch(error => {
         console.log(error);
@@ -318,11 +309,38 @@ export default {
       .catch(error => {
         console.log(error);
       });
-    this.$store.dispatch("loadDetailData", { id: this.id });
 
-    Promise.all([p1, p2, p3])
+    const p4 = firebase
+      .database()
+      .ref("podcasts/collectionId/")
+      .child(this.id)
+      .once("value")
+      .then(snapshot => {
+        if (snapshot.val()) {
+          this.detailData = snapshot.val();
+        } else {
+          this.detailData = null;
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    Promise.all([p1, p2, p3, p4])
       .then(() => {
         this.loading = false;
+
+        this.detailData.episodes = this.detailData.episodes.map(x => {
+          return {
+            ...x,
+            collectionId: this.lookupData.collectionId,
+            collectionName: this.lookupData.collectionName,
+            artworkUrl100: this.lookupData.artworkUrl100,
+            artworkUrl30: this.lookupData.artworkUrl30,
+            artworkUrl60: this.lookupData.artworkUrl60,
+            artworkUrl600: this.lookupData.artworkUrl600
+          };
+        });
       })
       .catch(error => {
         console.log(error);

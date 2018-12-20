@@ -49,6 +49,7 @@
         <ContactUs></ContactUs>
       </v-list>
     </v-navigation-drawer>
+
     <v-toolbar color="indigo" dark fixed app>
       <v-toolbar-side-icon @click.stop="sideNav = !sideNav"></v-toolbar-side-icon>
       <v-toolbar-title>배가놈의 텐</v-toolbar-title>
@@ -156,61 +157,7 @@
                       <v-icon>queue_music</v-icon>
                     </v-btn>
                     <v-card height="660px" width="480px">
-                      <v-layout fluid>
-                        <v-toolbar>
-                          <v-toolbar-title>Next up</v-toolbar-title>
-                          <v-spacer></v-spacer>
-                          <v-btn @click="clearPlayList">clear</v-btn>
-                        </v-toolbar>
-                      </v-layout>
-                      <v-container class="scroll-y" id="scroll-target" pa-0>
-                        <v-layout fluid>
-                          <draggable :options="{handle:'.my-handle'}" id="123" v-model="queueItems">
-                            <v-list
-                              :key="item.enclosure.url + '_' + index"
-                              class="pa-0"
-                              v-for="(item, index) in queueItems"
-                            >
-                              <div>
-                                <v-list-tile
-                                  :class="index == nowPlaying.index? 'grey lighten-2':''"
-                                  :key="item.enclosure.url + '_' + index"
-                                  @click.stop="playItem({index:index, item:item})"
-                                  style="cursor: pointer"
-                                >
-                                  <v-list-tile-action style="opacity: 0.5">
-                                    <v-btn class="my-handle" flat icon style="cursor: move">
-                                      <v-icon>more_vert</v-icon>
-                                    </v-btn>
-                                  </v-list-tile-action>
-
-                                  <v-list-tile-content
-                                    :class="index < nowPlaying.index? 'before-queue':''"
-                                  >
-                                    <v-list-tile-title style="font-size: 12px">{{item.title}}</v-list-tile-title>
-                                    <v-list-tile-title
-                                      class="grey--text"
-                                      style="font-size: 12px"
-                                    >{{item.published | date}}</v-list-tile-title>
-                                  </v-list-tile-content>
-                                  <v-spacer></v-spacer>
-                                  <v-list-tile-action>
-                                    <v-btn
-                                      @click.stop="playListRemoveIndex(index)"
-                                      flat
-                                      icon
-                                      v-if="nowPlaying.index != index"
-                                    >
-                                      <v-icon small>close</v-icon>
-                                    </v-btn>
-                                  </v-list-tile-action>
-                                </v-list-tile>
-                                <v-divider :key="index" v-if="index + 1 < queueItems.length"></v-divider>
-                              </div>
-                            </v-list>
-                          </draggable>
-                        </v-layout>
-                      </v-container>
+                      <Infinite></Infinite>
                     </v-card>
                   </v-menu>
                 </v-flex>
@@ -225,8 +172,8 @@
 
 <script>
 import { bus } from "./main";
-import draggable from "vuedraggable";
 import ContactUs from "./components/ContactUs.vue";
+import Infinite from "./components/Infinite.vue";
 
 // cpu 너무 먹는듯 수정 필요
 const formatTime = second =>
@@ -235,8 +182,8 @@ const formatTime = second =>
 export default {
   name: "App",
   components: {
-    draggable,
-    ContactUs
+    ContactUs,
+    Infinite
   },
   data() {
     return {
@@ -261,21 +208,8 @@ export default {
         this.$store.dispatch("setLoading", value);
       }
     },
-    queueItems: {
-      get() {
-        return this.$store.getters.queueItems;
-      },
-      set(value) {
-        this.$store.commit("setPlayList", value);
-      }
-    },
     nowPlaying() {
       return this.$store.getters.nowPlaying;
-    },
-    nowPlayingTitle() {
-      let item = this.queueItems[this.$store.getters.nowPlaying.index];
-      if (item != undefined) return item.title;
-      else return "";
     },
     duration: function() {
       return this.audio ? formatTime(this.totalDuration) : "";
@@ -385,15 +319,6 @@ export default {
 
     goToPlayVue() {
       this.$router.push("/play");
-    },
-    playListRemoveIndex(index) {
-      this.$store.dispatch("playListRemoveIndex", index);
-    },
-    clearPlayList() {
-      this.$store.dispatch("clearPlayList");
-    },
-    playItem(payload) {
-      this.$store.dispatch("playItem", payload);
     },
     skipNext() {
       this.$store.dispatch("skipNext");
@@ -565,18 +490,6 @@ export default {
 };
 </script>
 <style>
-.flip-list-move {
-  transition: transform 0.5s;
-}
-
-.before-queue {
-  opacity: 0.5;
-}
-
-.now-queue {
-  color: lightgrey;
-}
-
 .chosen {
   color: #fff;
   background-color: #c00;
