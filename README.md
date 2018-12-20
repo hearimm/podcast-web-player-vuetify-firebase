@@ -20,8 +20,8 @@
 3. ~~이미 RSS 요청됬을때 처리 추가~~
 4. ~~팟빵 RSS 주소일때 alert 추가~~
 5. ~~조회된 데이터 없습니다 먼저 뜨는 이슈 수정~~
-6. vuex 에서 detailData 빼기
-7. 날짜 sorting 안됨.
+6. ~~vuex 에서 detailData 빼기~~
+7. ~~날짜 sorting 안됨.~~
 
 ### 회원기능
 
@@ -37,12 +37,13 @@
 ### Play VUE
 
 1. ~~\$root.child 에서 event bus로 변경~~
-1. 자세히보기 화면 이동
+1. ~~자세히보기 화면 이동~~
 
 ### App VUE
 
 1. ~~footer xs 디자인 변경~~
-1. 재생목록 변경 <https://github.com/vuejs/awesome-vue#infinite-scroll>
+1. ~~재생목록 변경 load more~~
+1. 랜딩 페이지 로그인 안하면 배성재 유니버스에 가둬버...
 
 ## Project setup
 
