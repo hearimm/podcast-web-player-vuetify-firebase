@@ -64,7 +64,7 @@
                   </v-btn>
                 </v-layout>
               </v-container>
-              <v-layout>
+              <v-layout v-if="false">
                 <v-flex>
                   <v-slider
                     :disabled="!loaded"
@@ -83,10 +83,11 @@
                 <v-btn @click="toggleAudioPlaybackRate" icon large>
                   <h3>{{playbackRateValue}}x</h3>
                 </v-btn>
-                <v-btn @click="()=>{}" icon large>
+
+                <v-btn @click="()=>{}" icon large disabled>
                   <v-icon>more_horiz</v-icon>
                 </v-btn>
-                <v-btn @click="()=>{}" icon large>
+                <v-btn @click="()=>{}" icon large disabled>
                   <v-icon>more_horiz</v-icon>
                 </v-btn>
               </v-layout>

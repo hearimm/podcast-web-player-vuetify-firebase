@@ -11,15 +11,6 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile to="/about">
-          <v-list-tile-action>
-            <v-icon>contact_mail</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Contact</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
         <v-list-tile to="/play">
           <v-list-tile-action>
             <v-icon>music_note</v-icon>
@@ -50,23 +41,31 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-toolbar color="indigo" dark fixed app>
+    <v-toolbar color="primary" dark extended extension-height="7" fixed app>
       <v-toolbar-side-icon @click.stop="sideNav = !sideNav"></v-toolbar-side-icon>
-      <v-toolbar-title>배가놈의 텐</v-toolbar-title>
+      <img class="ml-2" :src="logoSvg" height="42" width="42">
+      <v-toolbar-title justify-center align-center>팟죽</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-layout row align-center style="max-width: 650px">
-        <v-text-field
-          placeholder="Search..."
-          single-line
-          append-icon="search"
-          color="white"
-          hide-details
-          v-model="search"
-          @keyup.enter="submitSearch"
-          @click:append="submitSearch"
-        ></v-text-field>
-      </v-layout>
+      <v-text-field
+        placeholder="Search..."
+        single-line
+        append-icon="search"
+        color="white"
+        hide-details
+        v-model="search"
+        @keyup.enter="submitSearch"
+        @click:append="submitSearch"
+      ></v-text-field>
+
+      <v-progress-linear
+        v-if="loading"
+        slot="extension"
+        :indeterminate="true"
+        class="ma-0"
+        color="secondary"
+      >Progress?</v-progress-linear>
     </v-toolbar>
+
     <v-content>
       <v-container fluid>
         <router-view></router-view>
@@ -130,7 +129,7 @@
           <v-flex xs12 sm12 md5>
             <v-snackbar v-model="snackbar" bottom multi-line>
               {{ audioErrorMessage }}
-              <v-btn color="pink" flat @click="snackbar = false">Close</v-btn>
+              <v-btn color="error" flat @click="snackbar = false">Close</v-btn>
             </v-snackbar>
             <v-card height="49" id="playerCard">
               <v-layout row fill-height>
@@ -144,7 +143,7 @@
                         <a
                           class="grey--text mb-1"
                           style="font-size: 11px; height: 17px"
-                        >{{nowPlaying.item.collectionName}}</a>
+                        >{{nowPlaying.item.collectionName}} {{nowPlaying.item.published | date}}</a>
                       </v-layout>
                       <v-layout>
                         <a
@@ -177,6 +176,7 @@
 
 <script>
 import { bus } from "./main";
+import logoSvg from "./assets/logo.svg";
 import ContactUs from "./components/ContactUs.vue";
 import Infinite from "./components/Infinite.vue";
 
@@ -192,6 +192,7 @@ export default {
   },
   data() {
     return {
+      logoSvg: logoSvg,
       errorTry: 0,
       maxTry: 3,
       sideNav: false,
@@ -301,11 +302,6 @@ export default {
         this.setVolumePosition();
         this.$store.dispatch("player/totalDuration", value);
       }
-    }
-  },
-  watch: {
-    nowPlaying: val => {
-      console.log(val + "nowplaying changed");
     }
   },
   methods: {
@@ -423,7 +419,7 @@ export default {
           this.totalDuration = parseInt(this.audio.duration);
           this.loaded = true;
         }
-        this.audio.setAttribute("title", this.nowPlaying.title); // ios title on lock screen
+        this.audio.setAttribute("title", this.nowPlaying.item.title); // ios title on lock screen
         if (this.autoPlay) this.audio.play().then(() => (this.playing = true));
       } else {
         console.log("Failed to load sound file");

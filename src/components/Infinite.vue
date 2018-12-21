@@ -61,23 +61,8 @@
       </v-list>
     </draggable>
     <v-layout justify-center>
-      <v-btn v-if="isMaxIdxGreaterThanQueueLength" @click="maxIdx += 15">more</v-btn>
+      <v-btn round flat v-if="isMaxIdxGreaterThanQueueLength" @click="maxIdx += 15">결과 더 보기</v-btn>
     </v-layout>
-    <!-- <v-list>
-        <v-list-tile
-          v-for="(item, index) in queueItems.slice(0,maxIdx+15)"
-          :key="item.enclosure.url + '_' + index"
-          avatar
-          @click="()=>{}"
-        >
-          <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-      <v-layout justify-center>
-        <v-btn @click="maxIdx += 15">more</v-btn>
-    </v-layout>-->
   </v-card>
 </template>
 <script>

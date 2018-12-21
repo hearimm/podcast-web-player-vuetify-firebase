@@ -7,18 +7,13 @@
     </v-layout>
 
     <v-flex offset-sm3 sm6 v-if="podcasts.length < 1" xs12>
-    <v-alert
-      :value="true"
-      type="warning"
-    >
-      조회된 결과가 없습니다
-    </v-alert>
+      <v-alert :value="true" type="warning">조회된 결과가 없습니다</v-alert>
     </v-flex>
 
     <v-layout :key="item.collectionId" mt-2 row v-for="item in podcasts" wrap>
       <v-flex offset-sm3 sm6 xs12>
-        <v-card >
-          <v-img :src="item.artworkUrl600" height="200px"></v-img>
+        <v-card>
+          <v-img :src="item.artworkUrl600" height="200px" contain></v-img>
 
           <v-card-title primary-title>
             <div>
@@ -28,10 +23,9 @@
           </v-card-title>
 
           <v-card-actions>
-            <v-btn flat>Share</v-btn>
+            <v-btn flat disabled>{{ item.releaseDate | date }}</v-btn>
             <v-btn :to="'detail/' + item.collectionId" color="purple" flat>Explore</v-btn>
           </v-card-actions>
-
         </v-card>
         <v-divider></v-divider>
       </v-flex>

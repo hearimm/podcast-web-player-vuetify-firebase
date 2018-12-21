@@ -32,7 +32,13 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click="dialog = false">Close</v-btn>
-          <v-btn color="blue darken-1" flat @click="sendEmail">Send</v-btn>
+          <v-btn
+            color="blue darken-1"
+            :loading="loading"
+            :disabled="loading"
+            flat
+            @click="sendEmail"
+          >Send</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -42,6 +48,7 @@
 export default {
   name: "contactUs",
   data: () => ({
+    loading: false,
     dialog: false,
     valid: false,
     name: "",
@@ -58,6 +65,7 @@ export default {
   }),
   methods: {
     sendEmail() {
+      this.loading = true;
       var apiUrl = "https://express-test-hyuk.herokuapp.com/api/contact";
       this.axios
         .post(apiUrl, {
@@ -68,9 +76,11 @@ export default {
         .then(response => {
           console.log(response);
           this.dialog = false;
+          this.loading = false;
         })
         .catch(error => {
           console.log(error);
+          this.loading = false;
         });
     }
   }
