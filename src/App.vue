@@ -81,7 +81,6 @@
               <audio
                 :loop="repeat === 'repeat_one'"
                 :src="nowPlaying.src"
-                :title="nowPlaying.title"
                 controls
                 hidden
                 id="player"
@@ -129,26 +128,32 @@
             </v-layout>
           </v-flex>
           <v-flex xs12 sm12 md5>
+            <v-snackbar v-model="snackbar" bottom multi-line>
+              {{ audioErrorMessage }}
+              <v-btn color="pink" flat @click="snackbar = false">Close</v-btn>
+            </v-snackbar>
             <v-card height="49" id="playerCard">
               <v-layout row fill-height>
                 <v-flex align-self-center xs-1 sm-1 md-1>
-                  <v-img
-                    src="http://img2.sbs.co.kr/sbs_img/2016/03/25/1400x1400_ten.png"
-                    height="30px"
-                    width="30px"
-                    contain
-                  ></v-img>
+                  <v-img :src="nowPlaying.item.artworkUrl30" height="30px" width="30px" contain></v-img>
                 </v-flex>
                 <v-flex xs11 sm11 md8>
-                  <v-card-title class="pa-0" style="cursor:pointer" @click="routeToPlayVue">
+                  <v-card-actions class="pa-0" style="cursor:pointer" @click="routeToPlayVue">
                     <v-flex fill-height>
-                      <p class="grey--text mb-1" style="font-size: 11px; height: 17px">배성재의 텐</p>
-                      <p
-                        class="grey--text text--darken-2 ma-0"
-                        style="font-size: 11px; height: 17px"
-                      >{{nowPlaying.item.title}}</p>
+                      <v-layout>
+                        <a
+                          class="grey--text mb-1"
+                          style="font-size: 11px; height: 17px"
+                        >{{nowPlaying.item.collectionName}}</a>
+                      </v-layout>
+                      <v-layout>
+                        <a
+                          class="grey--text text--darken-2 ma-0"
+                          style="font-size: 11px; height: 17px"
+                        >{{nowPlaying.item.title}}</a>
+                      </v-layout>
                     </v-flex>
-                  </v-card-title>
+                  </v-card-actions>
                 </v-flex>
                 <!--queue-->
                 <v-flex align-self-center id="flex" md2 hidden-sm-and-down>
@@ -187,10 +192,14 @@ export default {
   },
   data() {
     return {
+      errorTry: 0,
+      maxTry: 3,
       sideNav: false,
       menu: false,
+      audioErrorMessage: "",
       contactUsDialog: false,
       search: "",
+      snackbar: false,
       audio: undefined,
       percentage: 0,
       currentTime: "00:00:00"
@@ -325,6 +334,7 @@ export default {
       this.$router.push("/play");
     },
     skipNext() {
+      this.stop();
       this.$store.dispatch("skipNext");
     },
     shuffle() {
@@ -383,7 +393,7 @@ export default {
       window.open(this.file, "download");
     },
     setVolumePosition() {
-      console.log(this.volumePercentage);
+      // console.log(this.volumePercentage);
       this.audio.volume =
         this.volumePercentage === 0 ? 0 : this.volumePercentage / 100;
     },
@@ -396,6 +406,8 @@ export default {
       this.audio.load();
     },
     _handleLoaded: function() {
+      console.log("_handleLoaded");
+      console.log(this.audio.readyState);
       if (this.audio.readyState >= 2) {
         if (this.audio.duration === Infinity) {
           // Fix duration for streamed audio source or blob based
@@ -411,9 +423,10 @@ export default {
           this.totalDuration = parseInt(this.audio.duration);
           this.loaded = true;
         }
+        this.audio.setAttribute("title", this.nowPlaying.title); // ios title on lock screen
         if (this.autoPlay) this.audio.play().then(() => (this.playing = true));
       } else {
-        throw new Error("Failed to load sound file");
+        console.log("Failed to load sound file");
       }
     },
     _handlePlayingUI: function() {
@@ -437,10 +450,26 @@ export default {
       }
     },
     _handleEnded() {
+      console.log("_handleEnded");
       this.paused = this.playing = false;
       if (this.repeat !== "repeat_one") {
         // this.play;
         this.$store.dispatch("skipNext");
+        this.reload();
+      }
+    },
+    _handleError() {
+      if (this.audio.currentSrc.length <= 0) {
+        return;
+      }
+      if (this.errorTry++ < this.maxTry) {
+        setTimeout(() => {
+          this.audio.load();
+        }, 3000);
+      } else {
+        this.snackbar = true;
+        this.audioErrorMessage =
+          "3번 해봤는데 안되요 ㅠ 다시 해봐요" + " " + this.audio.error.message;
       }
     },
     init: function() {
@@ -449,6 +478,7 @@ export default {
       this.audio.addEventListener("pause", this._handlePlayPause);
       this.audio.addEventListener("play", this._handlePlayPause);
       this.audio.addEventListener("ended", this._handleEnded);
+      this.audio.addEventListener("error", this._handleError);
     }
   },
   created() {},
@@ -484,6 +514,7 @@ export default {
     this.audio.removeEventListener("pause", this._handlePlayPause);
     this.audio.removeEventListener("play", this._handlePlayPause);
     this.audio.removeEventListener("ended", this._handleEnded);
+    this.audio.addEventListener("error", this._handleError);
   }
 };
 </script>
