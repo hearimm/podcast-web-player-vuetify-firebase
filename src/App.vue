@@ -43,8 +43,15 @@
 
     <v-toolbar color="primary" dark extended extension-height="7" fixed app>
       <v-toolbar-side-icon @click.stop="sideNav = !sideNav"></v-toolbar-side-icon>
-      <img class="ml-2" :src="logoSvg" height="42" width="42">
-      <v-toolbar-title justify-center align-center>팟죽</v-toolbar-title>
+      <img
+        class="ml-2"
+        :src="logoSvg"
+        height="42"
+        width="42"
+        style="cursor:pointer"
+        @click="routeToHome"
+      >
+      <v-toolbar-title justify-center align-center style="cursor:pointer" @click="routeToHome">팟죽</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-text-field
         placeholder="Search..."
@@ -325,6 +332,9 @@ export default {
           this.loading = false;
           console.log(error);
         });
+    },
+    routeToHome() {
+      this.$router.push("/");
     },
     routeToPlayVue() {
       this.$router.push("/play");
