@@ -88,6 +88,7 @@
                 :loop="repeat === 'repeat_one'"
                 :src="nowPlaying.src"
                 controls
+                autoplay
                 hidden
                 id="player"
                 ref="player"
@@ -430,7 +431,12 @@ export default {
           this.loaded = true;
         }
         this.audio.setAttribute("title", this.nowPlaying.item.title); // ios title on lock screen
-        if (this.autoPlay) this.audio.play().then(() => (this.playing = true));
+        if (this.autoPlay) {
+          this.audio
+            .play()
+            .then(() => (this.playing = true))
+            .catch(error => console.log(error));
+        }
       } else {
         console.log("Failed to load sound file");
       }
@@ -520,7 +526,7 @@ export default {
     this.audio.removeEventListener("pause", this._handlePlayPause);
     this.audio.removeEventListener("play", this._handlePlayPause);
     this.audio.removeEventListener("ended", this._handleEnded);
-    this.audio.addEventListener("error", this._handleError);
+    this.audio.removeEventListener("error", this._handleError);
   }
 };
 </script>

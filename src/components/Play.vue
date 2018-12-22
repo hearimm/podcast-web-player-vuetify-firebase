@@ -133,7 +133,7 @@ export default {
       else return "";
     },
     duration: function() {
-      return this.audio ? formatTime(this.totalDuration) : "";
+      return formatTime(this.totalDuration);
     },
     repeat() {
       return this.$store.getters.repeat;
