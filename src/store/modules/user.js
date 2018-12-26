@@ -89,6 +89,53 @@ const actions = {
           "https://itunes.apple.com/kr/podcast/%EB%B0%B0%EC%84%B1%EC%9E%AC%EC%9D%98-%ED%85%90/id1096961355?mt=2&uo=4",
         wrapperType: "track"
       },
+      "-LUdvDnJG__EmoqqjD5j": {
+        artistName: "과장창",
+        artworkUrl100:
+          "https://is3-ssl.mzstatic.com/image/thumb/Music115/v4/52/ad/a7/52ada769-9dc7-f98b-c63d-1393fa6d2a22/source/100x100bb.jpg",
+        artworkUrl30:
+          "https://is3-ssl.mzstatic.com/image/thumb/Music115/v4/52/ad/a7/52ada769-9dc7-f98b-c63d-1393fa6d2a22/source/30x30bb.jpg",
+        artworkUrl60:
+          "https://is3-ssl.mzstatic.com/image/thumb/Music115/v4/52/ad/a7/52ada769-9dc7-f98b-c63d-1393fa6d2a22/source/60x60bb.jpg",
+        artworkUrl600:
+          "https://is3-ssl.mzstatic.com/image/thumb/Music115/v4/52/ad/a7/52ada769-9dc7-f98b-c63d-1393fa6d2a22/source/600x600bb.jpg",
+        collectionCensoredName: "과학으로 장난치는 게 창피해? 과장창!",
+        collectionExplicitness: "cleaned",
+        collectionHdPrice: 0,
+        collectionId: 1309473057,
+        collectionName: "과학으로 장난치는 게 창피해? 과장창!",
+        collectionPrice: 0,
+        collectionViewUrl:
+          "https://itunes.apple.com/kr/podcast/%EA%B3%BC%ED%95%99%EC%9C%BC%EB%A1%9C-%EC%9E%A5%EB%82%9C%EC%B9%98%EB%8A%94-%EA%B2%8C-%EC%B0%BD%ED%94%BC%ED%95%B4-%EA%B3%BC%EC%9E%A5%EC%B0%BD/id1309473057?mt=2&uo=4",
+        contentAdvisoryRating: "Clean",
+        country: "KOR",
+        currency: "KRW",
+        feedUrl: "http://pod.ssenhosting.com/rss/pb_20490/pbchannel_28165.xml",
+        genreIds: ["1448", "26", "1318", "1304", "1323", "1460"],
+        genres: [
+          "IT 및 과학 뉴스",
+          "팟캐스트",
+          "과학 기술",
+          "교육",
+          "게임 및 취미",
+          "취미"
+        ],
+        kind: "podcast",
+        primaryGenreName: "IT 및 과학 뉴스",
+        releaseDate: "2018-12-23T15:00:00Z",
+        trackCensoredName: "과학으로 장난치는 게 창피해? 과장창!",
+        trackCount: 69,
+        trackExplicitness: "cleaned",
+        trackHdPrice: 0,
+        trackHdRentalPrice: 0,
+        trackId: 1309473057,
+        trackName: "과학으로 장난치는 게 창피해? 과장창!",
+        trackPrice: 0,
+        trackRentalPrice: 0,
+        trackViewUrl:
+          "https://itunes.apple.com/kr/podcast/%EA%B3%BC%ED%95%99%EC%9C%BC%EB%A1%9C-%EC%9E%A5%EB%82%9C%EC%B9%98%EB%8A%94-%EA%B2%8C-%EC%B0%BD%ED%94%BC%ED%95%B4-%EA%B3%BC%EC%9E%A5%EC%B0%BD/id1309473057?mt=2&uo=4",
+        wrapperType: "track"
+      },
       "-LTvjrEHOWpEXqFSD-dB": {
         artistId: 419028603,
         artistName: "SBS",

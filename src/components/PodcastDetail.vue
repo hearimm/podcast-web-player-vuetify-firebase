@@ -24,6 +24,7 @@
             <!--<v-btn flat>Share</v-btn>-->
             <v-btn v-if="isSubscribes" color="purple" flat @click="unsubscribe">구독해지</v-btn>
             <v-btn v-else color="purple" flat @click="addSubscribe">구독</v-btn>
+            <v-spacer></v-spacer>
             <v-btn color="purple" flat @click="playListAddBingeWatching">정주행</v-btn>
             <v-btn color="purple" flat @click="playListAddBingeReserveWatching">역주행</v-btn>
             <v-dialog v-model="dialog" max-width="290">
@@ -117,6 +118,7 @@
 
 <script>
 import * as firebase from "firebase";
+import * as _ from "lodash";
 
 export default {
   name: "PodcastDetail",
@@ -236,7 +238,9 @@ export default {
       this.$store.dispatch("playListAdd", item);
     },
     playListAddBingeWatching() {
-      var sortEp = this.episodes.sort(function(a, b) {
+      var sortEp = _.cloneDeep(this.episodes);
+
+      sortEp.sort(function(a, b) {
         if (a.published > b.published) {
           return 1;
         }
@@ -248,6 +252,17 @@ export default {
       this.$store.dispatch("playListAddAll", sortEp);
     },
     playListAddBingeReserveWatching() {
+      var sortEp = _.cloneDeep(this.episodes);
+
+      sortEp.sort(function(a, b) {
+        if (a.published > b.published) {
+          return -1;
+        }
+        if (a.published < b.published) {
+          return 1;
+        }
+        return 0;
+      });
       this.$store.dispatch("playListAddAll", this.episodes);
     },
     playListAddAll() {
