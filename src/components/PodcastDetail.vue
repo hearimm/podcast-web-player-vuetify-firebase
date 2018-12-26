@@ -24,6 +24,8 @@
             <!--<v-btn flat>Share</v-btn>-->
             <v-btn v-if="isSubscribes" color="purple" flat @click="unsubscribe">구독해지</v-btn>
             <v-btn v-else color="purple" flat @click="addSubscribe">구독</v-btn>
+            <v-btn color="purple" flat @click="playListAddBingeWatching">정주행</v-btn>
+            <v-btn color="purple" flat @click="playListAddBingeReserveWatching">역주행</v-btn>
             <v-dialog v-model="dialog" max-width="290">
               <v-card>
                 <v-card-title class="headline">구독하시겠습니까?</v-card-title>
@@ -202,7 +204,10 @@ export default {
       return false;
     },
     isFeedUrlNotWorking() {
-      return this.lookupData.feedUrl.indexOf("pod.ssenhosting.com") > 0;
+      return (
+        this.lookupData.feedUrl.indexOf("pod.ssenhosting.com") > 0 &&
+        (this.detailData === null || this.detailData === undefined)
+      );
     }
   },
 
@@ -229,6 +234,21 @@ export default {
     },
     playListAdd(item) {
       this.$store.dispatch("playListAdd", item);
+    },
+    playListAddBingeWatching() {
+      var sortEp = this.episodes.sort(function(a, b) {
+        if (a.published > b.published) {
+          return 1;
+        }
+        if (a.published < b.published) {
+          return -1;
+        }
+        return 0;
+      });
+      this.$store.dispatch("playListAddAll", sortEp);
+    },
+    playListAddBingeReserveWatching() {
+      this.$store.dispatch("playListAddAll", this.episodes);
     },
     playListAddAll() {
       this.$store.dispatch("playListAddAll", this.episodes);

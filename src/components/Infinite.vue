@@ -31,7 +31,7 @@
             @click.stop="playItem({index:index, item:item})"
             style="cursor: pointer"
           >
-            <v-list-tile-action style="opacity: 0.5">
+            <v-list-tile-action style="opacity: 0.5; min-width: 36px">
               <v-btn class="my-handle" flat icon style="cursor: move">
                 <v-icon>more_vert</v-icon>
               </v-btn>
@@ -45,7 +45,7 @@
               >{{item.published | date}}</v-list-tile-title>
             </v-list-tile-content>
             <v-spacer></v-spacer>
-            <v-list-tile-action>
+            <v-list-tile-action style="min-width: 36px">
               <v-btn
                 @click.stop="playListRemoveIndex(index)"
                 flat

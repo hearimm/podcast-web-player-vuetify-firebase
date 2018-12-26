@@ -74,9 +74,9 @@
     </v-toolbar>
 
     <v-content>
-      <v-container fluid>
-        <router-view></router-view>
-      </v-container>
+      <!-- <v-container fluid> -->
+      <router-view></router-view>
+      <!-- </v-container> -->
     </v-content>
 
     <v-footer app height="49" id="footer">
