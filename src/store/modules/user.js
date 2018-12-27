@@ -23,24 +23,79 @@ const actions = {
     commit("setUser", null);
     commit("setSubscribes", null);
   },
+  savePlayList({ getters, rootGetters }) {
+    firebase
+      .database()
+      .ref("user/")
+      .child(getters.user.uid)
+      .update({
+        queueItems: rootGetters.queueItems
+      })
+      .then(() => {})
+      .catch(error => {
+        console.log(error);
+      });
+
+    firebase
+      .database()
+      .ref("user/")
+      .child(getters.user.uid)
+      .update({
+        nowPlaying: rootGetters.nowPlaying
+      })
+      .then(() => {})
+      .catch(error => {
+        console.log(error);
+      });
+  },
   fetchUserData({ commit, getters }) {
     commit("setLoading", true, { root: true });
     const ref = firebase
       .database()
       .ref("user/")
-      .child(getters.user.uid)
-      .child("subscribes");
+      .child(getters.user.uid);
 
-    ref
+    const p1 = ref
+      .child("queueItems")
+      .once("value")
+      .then(snapshot => {
+        commit("setPlayList", snapshot.val(), { root: true });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    const p2 = ref
+      .child("nowPlaying")
+      .once("value")
+      .then(snapshot => {
+        console.log(snapshot.val());
+        if (snapshot.val() !== null) {
+          commit("setNowPlaying", snapshot.val(), { root: true });
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    const p3 = ref
+      .child("subscribes")
       .once("value")
       .then(snapshot => {
         commit("setSubscribes", snapshot.val());
-        commit("setLoading", false, { root: true });
       })
       .catch(error => {
         commit("setSubscribes", null);
-        commit("setLoading", false, { root: true });
         console.log(error);
+      });
+
+    Promise.all([p1, p2, p3])
+      .then(() => {
+        commit("setLoading", false, { root: true });
+      })
+      .catch(error => {
+        console.log(error);
+        commit("setLoading", false, { root: true });
       });
   },
 

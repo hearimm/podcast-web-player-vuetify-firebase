@@ -43,9 +43,9 @@ export default new Vuex.Store({
     },
     setPlayList(state, payload) {
       state.queueItems = payload;
-      state.nowPlaying.index = state.queueItems.findIndex(x => {
-        return x.enclosure.url === state.nowPlaying.src;
-      });
+      // state.nowPlaying.index = state.queueItems.findIndex(x => {
+      //   return x.enclosure.url === state.nowPlaying.src;
+      // });
     },
     playListAdd(state, payload) {
       state.queueItems.push(payload);
@@ -98,6 +98,11 @@ export default new Vuex.Store({
     },
     clearPlayList(state) {
       state.queueItems = [state.queueItems[state.nowPlaying.index]];
+    },
+    setNowPlaying(state, payload) {
+      state.nowPlaying.index = payload.index;
+      state.nowPlaying.src = payload.src;
+      state.nowPlaying.item = payload.item;
     },
     playItem(state, payload) {
       state.nowPlaying.index = payload.index;

@@ -139,13 +139,20 @@
               {{ audioErrorMessage }}
               <v-btn color="error" flat @click="snackbar = false">Close</v-btn>
             </v-snackbar>
-            <v-card height="49" id="playerCard">
-              <v-layout row fill-height>
+            <v-card height="49" id="playerCard" @click="routeToPlayVue">
+              <!-- <v-layout  row fill-height> -->
+              <v-alert v-if="!isNowLoadingExists" :value="true" type="warning" class="py-1">
+                <v-avatar class="mr-3" :size="30">
+                  <img :src="noneQueueAvatar" alt="avatar">
+                </v-avatar>재생목록 없쪄염
+              </v-alert>
+              <!-- </v-layout> -->
+              <v-layout v-else row fill-height :class="{ warning: !isNowLoadingExists }">
                 <v-flex align-self-center xs-1 sm-1 md-1>
                   <v-img :src="nowPlaying.item.artworkUrl30" height="30px" width="30px" contain></v-img>
                 </v-flex>
                 <v-flex xs11 sm11 md8>
-                  <v-card-actions class="pa-0" style="cursor:pointer" @click="routeToPlayVue">
+                  <v-card-actions class="pa-0" style="cursor:pointer">
                     <v-flex fill-height>
                       <v-layout>
                         <a
@@ -187,6 +194,7 @@ import { bus } from "./main";
 import logoSvg from "./assets/logo.svg";
 import ContactUs from "./components/ContactUs.vue";
 import Infinite from "./components/Infinite.vue";
+import noneQueueAvatar from "@/assets/avatar_60_rotate.jpg";
 
 // cpu 너무 먹는듯 수정 필요
 const formatTime = second =>
@@ -201,6 +209,7 @@ export default {
   data() {
     return {
       logoSvg: logoSvg,
+      noneQueueAvatar: noneQueueAvatar,
       errorTry: 0,
       maxTry: 3,
       sideNav: false,
@@ -225,6 +234,9 @@ export default {
       set(value) {
         this.$store.dispatch("setLoading", value);
       }
+    },
+    isNowLoadingExists() {
+      return this.$store.getters.nowPlaying.src.length > 0;
     },
     nowPlaying() {
       return this.$store.getters.nowPlaying;
@@ -430,6 +442,9 @@ export default {
           this.totalDuration = parseInt(this.audio.duration);
           this.loaded = true;
         }
+
+        this.$store.dispatch("user/savePlayList");
+
         this.audio.setAttribute("title", this.nowPlaying.item.title); // ios title on lock screen
         if (this.autoPlay) {
           this.audio
@@ -481,7 +496,8 @@ export default {
       } else {
         this.snackbar = true;
         this.audioErrorMessage =
-          "3번 해봤는데 안되요 ㅠ 다시 해봐요" + " " + this.audio.error.message;
+          "3번 해봤는데 안되요 ㅠ 다시 해봐요 " + this.audio.error.message;
+        this.errorTry = 0;
       }
     },
     init: function() {
