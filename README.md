@@ -22,6 +22,7 @@
 
 ### 이런기능 있었으면
 
+1. Apple 기준 팟캐스트 순위 page
 1. 추천 play list (플레이 리스트 만들기)
 1. 회원 자격 / 등급 (윤태진 master platinum gold)
 1. 회원 랭킹 검색

@@ -7,23 +7,17 @@ import AuthSuccess from "./components/AuthSuccess.vue";
 import SearchResult from "./components/SearchResult.vue";
 import Play from "./components/Play.vue";
 import Infinite from "./components/Infinite.vue";
+import AppleTop100 from "./components/AppleTop100.vue";
 
 Vue.use(Router);
 
 export default new Router({
   base: process.env.BASE_URL,
   routes: [
-    {
-      path: "/infinite",
-      name: "infinite",
-      component: Infinite
-    },
-    {
-      path: "/",
-      name: "home",
-      component: Home
-    },
+    { path: "/", name: "home", component: Home },
+    { path: "/infinite", name: "infinite", component: Infinite },
     { path: "/auth", name: "auth", component: Auth },
+    { path: "/top", name: "top", component: AppleTop100 },
     { path: "/success", name: "authSuccess", component: AuthSuccess },
     { path: "/searchResult", name: "searchResult", component: SearchResult },
     { path: "/play", name: "play", component: Play },
