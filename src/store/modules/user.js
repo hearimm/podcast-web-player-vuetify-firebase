@@ -59,7 +59,9 @@ const actions = {
       .child("queueItems")
       .once("value")
       .then(snapshot => {
-        commit("setPlayList", snapshot.val(), { root: true });
+        if (snapshot.val() !== null) {
+          commit("setPlayList", snapshot.val(), { root: true });
+        }
       })
       .catch(error => {
         console.log(error);
