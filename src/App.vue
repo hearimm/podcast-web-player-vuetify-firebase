@@ -139,7 +139,7 @@
               {{ audioErrorMessage }}
               <v-btn color="error" flat @click="snackbar = false">Close</v-btn>
             </v-snackbar>
-            <v-card height="49" id="playerCard" @click="routeToPlayVue">
+            <v-card height="49" id="playerCard" >
               <!-- <v-layout  row fill-height> -->
               <v-alert v-if="!isNowLoadingExists" :value="true" type="warning" class="py-1">
                 <v-avatar class="mr-3" :size="30">
@@ -152,7 +152,7 @@
                   <v-img :src="nowPlaying.item.artworkUrl30" height="30px" width="30px" contain></v-img>
                 </v-flex>
                 <v-flex xs11 sm11 md8>
-                  <v-card-actions class="pa-0" style="cursor:pointer">
+                  <v-card-actions class="pa-0" style="cursor:pointer" @click="routeToPlayVue">
                     <v-flex fill-height>
                       <v-layout>
                         <a
